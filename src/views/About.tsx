@@ -18,7 +18,7 @@ export default function About() {
         About route
       </div>
       <div>
-        <button onClick={() => navigate("/")}> Go back</button>
+        <button className="cursor-pointer" onClick={() => navigate("/")}> Go back</button>
       </div>
     </div>
   );
