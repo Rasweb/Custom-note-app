@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+// The main container for the card. 
 function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -12,6 +13,7 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+// The section at the top of the card, usually for the title and actions.
 function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -25,14 +27,20 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+
+// The title of the card.
 function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return <div data-slot="card-title" className={cn("leading-none font-semibold", className)} {...props} />;
 }
 
+
+// A brief description or subtitle for the card.
 function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return <div data-slot="card-description" className={cn("text-muted-foreground text-sm", className)} {...props} />;
 }
 
+
+// Action buttons or links that the user can interact with.
 function CardAction({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -43,10 +51,12 @@ function CardAction({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+// Main content area for the card.
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   return <div data-slot="card-content" className={cn("px-6", className)} {...props} />;
 }
 
+// The footer section of the card for additional information or actions.
 function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div data-slot="card-footer" className={cn("flex items-center px-6 [.border-t]:pt-6", className)} {...props} />

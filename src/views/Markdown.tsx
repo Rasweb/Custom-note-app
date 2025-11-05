@@ -1,4 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";;
+import {Button } from "../components/ui/button"
+import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import ReactMarkdown  from 'react-markdown'
@@ -107,7 +109,8 @@ export default function Markdown() {
   return (
     <div>
       <div>
-        <button className="cursor-pointer" onClick={() => navigate("/")}> Go home</button>
+        <Button variant="link" size="default" onClick={() => navigate("/")}> Home</Button>
+
       </div>
       <div>
         <button className="cursor-pointer" onClick={() => getNotes()}>Get notes</button>
@@ -128,7 +131,8 @@ export default function Markdown() {
       </div>
       <div>
         <div>
-            <textarea  name="" id="" value={markdown} onChange={(e) => setMarkdown(e.target.value)} placeholder="Write markdown" className="w-full h-[30vh] cursor-pointer"/>
+          component text area
+          <Textarea name="" id="" value={markdown} onChange={(e) => setMarkdown(e.target.value)} placeholder="Write markdown"  className="w-full h-64"></Textarea>
         </div>
         <div>
             <p>MArkdown preview</p>

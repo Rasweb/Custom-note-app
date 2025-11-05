@@ -1,4 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";;
+import {Button } from "../components/ui/button"
 import { useNavigate } from "react-router-dom";
 
 import logo from "../logo.svg";
@@ -18,7 +19,7 @@ export default function About() {
         About route
       </div>
       <div>
-        <button className="cursor-pointer" onClick={() => navigate("/")}> Go back</button>
+        <Button variant="link" size="default" onClick={() => navigate("/")}> Home</Button>
       </div>
     </div>
   );
