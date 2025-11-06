@@ -4,93 +4,116 @@ import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import ReactMarkdown  from 'react-markdown'
+import { Input } from "@/components/ui/input";
 
 export default function Markdown() {
-        const [markdown, setMarkdown] = useState(`# Hello, Markdown!\n\nStart writing your notes here...`);
-    
-        // For create and update
-        // body: JSON.stringify({ title, content }),
-        const notesURL = "/database/notes";
-        async function getNotes(){
-          try{
-
-            const response = await fetch(notesURL, {
-              method: "GET",
-              headers: {"Content-Type": "application/json"},
-            });
-            return await response.json();
-          } catch(error){
-             console.error("Failed to fetch notes:", error);
-          }
-        };
-
-        async function createNotes(title: string, content: string, imageLink:string){
-          try{
-            const response = await fetch(notesURL,{
-              method: "POST",
-              headers: {"Content-Type": "application/json"},
-              body: JSON.stringify({
-                title: title,
-                content: content,
-                imageLink: imageLink
-              })
-            });
-            return await response.json();
-          }
-          catch(error){
-             console.error("Failed to fetch notes:", error);
-          }
-        };
-
-        async function getNoteById(id: number){
-          try{
-
-            const response = await fetch(`/database/note/:${id}`, {
-              method: "GET",
-              headers: {"Content-Type": "application/json"},
-            });
-            return await response.json();
-          }
-          catch(error){
-             console.error("Failed to fetch notes:", error);
-          }
-        };
-
-        async function updateNoteById(id: number){
-          try{
-            const response = await fetch(`/database/note/:${id}` ,{
-              method: "PUT",
-              headers: {"Content-Type": "application/json"},
-              body: JSON.stringify({
-                id,
-                title: "Updated title",
-                content: "Updated content",
-                imageLink: ""
-              }),
-            });
-            return await response.json();
-          } catch(error){
-             console.error("Failed to fetch notes:", error);
-          }
-        };
-
-        async function deleteNoteById(id: number){
-          try{
-
-            const response = await fetch(`/database/note/:${id}` ,{
-              method: "DELETE",
-              headers: {"Content-Type": "application/json"},
-            });
-            return await response.json();
-          }
-          catch(error){
-             console.error("Failed to fetch notes:", error);
-          }
-        };
-
+  const [markdown, setMarkdown] = useState(`# Hello, Markdown!\n\nStart writing your notes here...`);
   const navigate = useNavigate();
+  // For create and update
+  // body: JSON.stringify({ title, content }),
+  const notesURL = "/database/notes";
+  async function getNotes(){
+    try{
+
+      const response = await fetch(notesURL, {
+        method: "GET",
+        headers: {"Content-Type": "application/json"},
+      });
+      return await response.json();
+    } catch(error){
+        console.error("Failed to fetch notes:", error);
+    }
+  };
+
+  async function createNotes(title: string, content: string, imageLink:string){
+    try{
+      const response = await fetch(notesURL,{
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          title: title,
+          content: content,
+          imageLink: imageLink
+        })
+      });
+      return await response.json();
+    }
+    catch(error){
+        console.error("Failed to fetch notes:", error);
+    }
+  };
+
+  async function getNoteById(id: number){
+    try{
+
+      const response = await fetch(`/database/note/:${id}`, {
+        method: "GET",
+        headers: {"Content-Type": "application/json"},
+      });
+      return await response.json();
+    }
+    catch(error){
+        console.error("Failed to fetch notes:", error);
+    }
+  };
+
+  async function updateNoteById(id: number){
+    try{
+      const response = await fetch(`/database/note/:${id}` ,{
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          id,
+          title: "Updated title",
+          content: "Updated content",
+          imageLink: ""
+        }),
+      });
+      return await response.json();
+    } catch(error){
+        console.error("Failed to fetch notes:", error);
+    }
+  };
+
+  async function deleteNoteById(id: number){
+    try{
+
+      const response = await fetch(`/database/note/:${id}` ,{
+        method: "DELETE",
+        headers: {"Content-Type": "application/json"},
+      });
+      return await response.json();
+    }
+    catch(error){
+        console.error("Failed to fetch notes:", error);
+    }
+  };
+
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const response = await fetch("/upload/image", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+    const imageUrl = data.url; // e.g., https://yourcdn.com/image.jpg
+
+    setMarkdown((prev) => `${prev}\n\n![Uploaded Image](${imageUrl})`);
+  }
+
+
+
+
+
   return (
     <div>
+      <Input type="file" accept="image/*" onChange={handleImageUpload}></Input>
       <div>
         <Button variant="link" size="default" onClick={() => navigate("/")}> Home</Button>
 

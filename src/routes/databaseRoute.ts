@@ -1,5 +1,6 @@
 import { Database } from "bun:sqlite"
-// Open connectio to sqlite database
+import { join } from "path";
+// Open connection to sqlite database
 const db = new Database("mydb.sqlite");
 
 /* Bun SQLite
@@ -87,6 +88,35 @@ function deleteNote(){
   stmt.run(noteId);
 }
 
+async function handleImageUpload(req: Bun.BunRequest) {
+  const formData = await req.formData();
+  const file = formData.get("image");
+
+  if (!(file instanceof File)) {
+    return new Response("No image uploaded", { status: 400 });
+  }
+
+  const buffer = await file.arrayBuffer();
+  const fileName = `${Date.now()}-${file.name}`;
+  const dirPath = join("static", "images");
+  const filePath = join(dirPath, fileName);
+
+  await Bun.write(filePath, Buffer.from(buffer));
+  return Response.json({ url: `/uploads/${fileName}` });
+}
+
+async function serveStatic(req: Request) {
+  const url = new URL(req.url);
+  const filePath = join("static", "images", url.pathname.replace("/uploads/", ""));
+  try {
+    const file = Bun.file(filePath);
+    if (!(await file.exists())) throw new Error("Not found");
+    return new Response(file);
+  } catch {
+    return new Response("File not found", { status: 404 });
+  }
+}
+
 export const databaseRoute = {
   "/database/notes": {
     async GET(req:  Bun.BunRequest) {
@@ -120,6 +150,17 @@ export const databaseRoute = {
     async DELETE(req: Bun.BunRequest){
       deleteNote();
       return Response.json("Removed note");
+    }
+  },
+  "/upload/image": {
+    async POST(req: Bun.BunRequest) {
+      return handleImageUpload(req);
+    }
+  },
+
+  "/uploads/:filename": {
+    async GET(req: Bun.BunRequest) {
+      return serveStatic(req);
     }
   },
 };
