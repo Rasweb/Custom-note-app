@@ -8,7 +8,6 @@ import ReactMarkdown  from 'react-markdown'
 export default function Markdown() {
         const [markdown, setMarkdown] = useState(`# Hello, Markdown!\n\nStart writing your notes here...`);
     
-
         // For create and update
         // body: JSON.stringify({ title, content }),
         const notesURL = "/database/notes";
@@ -89,22 +88,6 @@ export default function Markdown() {
           }
         };
 
-        // TODO - implement in backend
-        async function loadNoteFromDatabase(id: number){
-            // const res = await fetch(`/api/note/${id}`);
-            // const data = await res.json();
-            // setMarkdown(data.content);
-        }
-    
-    
-        // TODO - Implement that in the backend save new or existing file
-        async function saveToDatabase(content: string, title = "Untitled"){
-            // await fetch("/api/save-note", {
-            //     method: "POST",
-            //     headers: { "Content-Type": "application/json" },
-            //     body: JSON.stringify({ title, content }),
-            // });
-        }
   const navigate = useNavigate();
   return (
     <div>
@@ -113,21 +96,11 @@ export default function Markdown() {
 
       </div>
       <div>
-        <button className="cursor-pointer" onClick={() => getNotes()}>Get notes</button>
-        <br />
-        <button className="cursor-pointer" onClick={() => createNotes("test title", "Some content", "")}>Create notes</button>
-        
-        <br />
-        <button className="cursor-pointer" onClick={() => getNoteById(1)}>Get note</button>
-        <br />
-        <button className="cursor-pointer" onClick={() => updateNoteById(1)}>Update note</button>
-        <br />
-        <button className="cursor-pointer" onClick={() => deleteNoteById(1)}>Delete note</button>
-
-
-
-
-        
+        <Button variant="outline" size="default" onClick={() => getNotes()}>Get notes</Button>
+        <Button variant="outline" size="default" onClick={() => createNotes("test title", "Some content", "")}>Create notes</Button>
+        <Button variant="outline" size="default" onClick={() => getNoteById(1)}>Get note</Button>
+        <Button variant="outline" size="default" onClick={() => updateNoteById(1)}>Update note</Button>
+        <Button variant="outline" size="default" onClick={() => deleteNoteById(1)}>Delete note</Button>
       </div>
       <div>
         <div>
