@@ -10,12 +10,6 @@ const server = serve({
 
       
       ...databaseRoute,
-      "/api/hello/:name": async req => {
-      const name = req.params.name;
-      return Response.json({
-        message: `Hello, ${name}!`,
-      });
-    },
   },
 
   development: process.env.NODE_ENV !== "production" && {

@@ -25,7 +25,7 @@ export default function Markdown() {
     }
   };
 
-  async function createNotes(title: string, content: string, imageLink:string){
+  async function createNotes(title: string, content: string){
     try{
       const response = await fetch(notesURL,{
         method: "POST",
@@ -33,7 +33,6 @@ export default function Markdown() {
         body: JSON.stringify({
           title: title,
           content: content,
-          imageLink: imageLink
         })
       });
       return await response.json();
@@ -108,9 +107,6 @@ export default function Markdown() {
   }
 
 
-
-
-
   return (
     <div>
       <Input type="file" accept="image/*" onChange={handleImageUpload}></Input>
@@ -120,7 +116,9 @@ export default function Markdown() {
       </div>
       <div>
         <Button variant="outline" size="default" onClick={() => getNotes()}>Get notes</Button>
-        <Button variant="outline" size="default" onClick={() => createNotes("test title", "Some content", "")}>Create notes</Button>
+        <Button variant="outline" size="default" onClick={() => createNotes("test title", `# CSome content  
+ ![test img|10](/uploads/1762631238272-logo.svg)  
+          an image `)}>Create notes</Button>
         <Button variant="outline" size="default" onClick={() => getNoteById(1)}>Get note</Button>
         <Button variant="outline" size="default" onClick={() => updateNoteById(1)}>Update note</Button>
         <Button variant="outline" size="default" onClick={() => deleteNoteById(1)}>Delete note</Button>
@@ -150,7 +148,7 @@ export default function Markdown() {
                 ),
                 li: ({node, ...props}) => (
                     <li className="mb-1" {...props} />
-                )
+                )            
             }}
             >{markdown}</ReactMarkdown >
         </div>

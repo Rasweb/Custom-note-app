@@ -40,7 +40,6 @@ function createTable(){
       id INTEGER PRIMARY KEY, 
       title TEXT NOT NULL,
       content TEXT,
-      image_link TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )`);
@@ -55,11 +54,11 @@ function getAllNotes(){
 async function createNote(req: Bun.BunRequest){
   const body = await req.json(); // Parse the stream into a JSON object
   const { title, content, imageLink } = body;
-  db.run("INSERT INTO notes (title, content, image_link) VALUES (?, ?, ?)", [title, content, imageLink]);
+  db.run("INSERT INTO notes (title, content) VALUES (?, ?)", [title, content]);
 };
 
-function getNote(){
-  const id = 1;
+function getNote(currId: number){
+  const id = currId;
   const query = db.query(`SELECT * FROM notes WHERE id = ?`);
   const result = query.all(id);
   return result;
@@ -72,7 +71,6 @@ async function updateNote(req: Bun.BunRequest){
     UPDATE notes SET 
       title = ?, 
       content = ?, 
-      image_link = ?, 
       updated_at = CURRENT_TIMESTAMP 
       WHERE id = ?
       RETURNING *;
@@ -81,13 +79,14 @@ async function updateNote(req: Bun.BunRequest){
   return updatedNote;
 };
 
-function deleteNote(){
-  const noteId = 1;
+function deleteNote(currId: number){
+  const noteId = currId;
   const sql = `DELETE FROM notes WHERE id = :id;`
   const stmt = db.prepare(sql);
   stmt.run(noteId);
 }
 
+// process image upload from a form submission
 async function handleImageUpload(req: Bun.BunRequest) {
   const formData = await req.formData();
   const file = formData.get("image");
@@ -117,6 +116,14 @@ async function serveStatic(req: Request) {
   }
 }
 
+// handle the id:  :1
+function idFix(req: Bun.BunRequest){
+  const rawId = (req.params as { id: string }).id;
+  const id = Number(rawId.replace(/^:/, ''));
+
+  return id;
+}
+
 export const databaseRoute = {
   "/database/notes": {
     async GET(req:  Bun.BunRequest) {
@@ -137,8 +144,9 @@ export const databaseRoute = {
   },
   "/database/note/:id":{
     async GET(req: Bun.BunRequest){
-      const note = getNote();
-      return Response.json(note);
+    const id = idFix(req);
+    const note = await getNote(id);
+    return Response.json(note);
     },
     async PUT(req: Bun.BunRequest){
       const updatedNote = await updateNote(req);
@@ -148,7 +156,8 @@ export const databaseRoute = {
       });
     },
     async DELETE(req: Bun.BunRequest){
-      deleteNote();
+      const id = idFix(req);
+      await deleteNote(id);
       return Response.json("Removed note");
     }
   },
