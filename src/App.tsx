@@ -2,9 +2,9 @@ import "./index.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home  from "./views/Home";
 import About from "./views/About"
-import Markdown from "./views/Markdown";
 import Note from "./views/Note";
 import CreateNote from "./views/CreateNote";
+import EditNote from "./views/EditNote";
 import { useEffect } from "react";
 
 export function App() {
@@ -20,9 +20,9 @@ export function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
-        <Route path="/markdown" element={<Markdown/>} />
         <Route path="/note/:id" element={<Note/>} /> 
         <Route path="/create/note" element={<CreateNote/>} />
+        <Route path="/edit/note/:id" element={<EditNote/>} />
       </Routes>
     </BrowserRouter>
   );

@@ -65,7 +65,7 @@ export default function Note() {
             </CardDescription>
             <CardAction className="self-center">
               <Button title="/" variant="link" size="default" onClick={() => navigate("/")}>Back to Notes</Button>
-              <Button title="/edit/note" variant="link" size="default" onClick={() => navigate("/edit/note")}>Edit note</Button>
+              <Button title="/edit/note" variant="link" size="default" onClick={() => navigate(`/edit/note/${note?.id}`)}>Edit note</Button>
               <Button title="/delete/note" variant="outline" size="default" onClick={() => deleteNoteById(Number(note?.id))}>Delete note</Button>
             </CardAction>
           </CardHeader>

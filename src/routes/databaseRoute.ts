@@ -66,7 +66,7 @@ function getNote(currId: number){
 
 async function updateNote(req: Bun.BunRequest){
   const body = await req.json();
-  const { id, title, content, imageLink } = body;
+  const { id, title, content } = body;
   const query = db.query(`
     UPDATE notes SET 
       title = ?, 
@@ -75,7 +75,7 @@ async function updateNote(req: Bun.BunRequest){
       WHERE id = ?
       RETURNING *;
   `);   
-  const updatedNote = query.get(title, content, imageLink, id);
+  const updatedNote = query.get(title, content, id);
   return updatedNote;
 };
 

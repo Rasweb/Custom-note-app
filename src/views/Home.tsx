@@ -57,7 +57,6 @@ export default function Home(){
           </CardHeader>
           <CardContent>
             <Button title="/about" variant="link" size="default" onClick={() => navigate("/about")}>About page</Button>
-            <Button title="/markdown" variant="link" size="default" onClick={() => navigate("/markdown")}> Markdown page</Button>
           </CardContent>
         </Card>
 

@@ -10,6 +10,10 @@ export default function CreateNote() {
     const navigate = useNavigate();
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
+    const [errorHandle, setErrorHandle] = useState({
+        bool: false,
+        msg: ""
+    })
 
     async function createNoteFunc(e: ChangeEvent<HTMLFormElement>){
         e.preventDefault();
@@ -29,7 +33,13 @@ export default function CreateNote() {
             return await response.json();
         }
         catch(error){
-            console.error("Failed to fetch notes:", error);
+            if(error  instanceof Error){
+                console.error("Failed to fetch notes:", error.message);
+                setErrorHandle({bool: true, msg: error.message});
+            } else {
+                console.error("Unknown error:", error);
+                setErrorHandle({bool: true, msg: String(error)});
+            }
         }
     };
 
@@ -38,6 +48,7 @@ export default function CreateNote() {
     <div className="container mx-auto p-8 text-center relative z-10">
         <Card className="mx-auto ">
           <CardHeader  className="flex flex-col items-center gap-2">
+            {errorHandle.bool && <div className="text-red-500">Error: {errorHandle.msg} </div>}
             <CardTitle>Welcome to note creation screen</CardTitle>
             <CardAction className="self-center">
               <Button title="/" variant="link" size="default" onClick={() => navigate("/")}>Go Home</Button>
