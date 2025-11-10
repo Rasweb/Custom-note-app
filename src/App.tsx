@@ -4,6 +4,7 @@ import Home  from "./views/Home";
 import About from "./views/About"
 import Markdown from "./views/Markdown";
 import Note from "./views/Note";
+import CreateNote from "./views/CreateNote";
 import { useEffect } from "react";
 
 export function App() {
@@ -21,6 +22,7 @@ export function App() {
         <Route path="/about" element={<About />} />
         <Route path="/markdown" element={<Markdown/>} />
         <Route path="/note/:id" element={<Note/>} /> 
+        <Route path="/create/note" element={<CreateNote/>} />
       </Routes>
     </BrowserRouter>
   );

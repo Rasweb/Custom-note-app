@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle, CardAction } from "@/components/ui/card";
 import {Button } from "../components/ui/button"
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 type NoteType = {
@@ -14,6 +14,8 @@ export default function Home(){
     const navigate = useNavigate();
     const [noteCount, setNoteCount] = useState(0);
     const [notes, setNotes] = useState([]);
+    const location = useLocation();
+    const message = location.state?.message;
 
     async function getNotes(){
       const notesURL = "/database/notes";
@@ -43,12 +45,14 @@ export default function Home(){
 
     return(
       <div className="container w-full mx-auto p-8 text-center  dark:text-white">
+        {/* TODO - Temp status msg */}
+        {message && <div className="text-green-500">{message}</div>}
         <Card className="mx-auto ">
           <CardHeader  className="flex flex-col items-center gap-2">
             {noteCount ? <CardTitle>Welcome there are {noteCount} notes found</CardTitle> : <CardTitle>No notes found</CardTitle>}
             <CardAction className="self-center">
               <Button title="dark/light mode" variant={"outline"} onClick={() => toggleMode()}>Toggle Mode</Button>
-              <Button title="/create" variant="link" size="default" onClick={() => navigate("/create")}>Create a new note</Button>
+              <Button title="/create/note" variant="link" size="default" onClick={() => navigate("/create/note")}>Create a new note</Button>
             </CardAction>
           </CardHeader>
           <CardContent>
