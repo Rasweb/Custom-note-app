@@ -33,6 +33,10 @@ INFO
   - Fetches the rows that where modified by the UPDATE satement.
   - Return rows that match the WHERE clause.
 */
+// For adding new columns
+function addNewColumn(){
+  // db.run("ALTER TABLE table_name ADD COLUMN column_name column_type");
+}
 
 function createTable(){
   db.run(`
@@ -53,7 +57,7 @@ function getAllNotes(){
 
 async function createNote(req: Bun.BunRequest){
   const body = await req.json(); // Parse the stream into a JSON object
-  const { title, content, imageLink } = body;
+  const { title, content} = body;
   db.run("INSERT INTO notes (title, content) VALUES (?, ?)", [title, content]);
 };
 

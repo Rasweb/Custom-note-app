@@ -53,13 +53,13 @@ export default function Home(){
             <CardAction className="self-center">
               <Button title="dark/light mode" variant={"outline"} onClick={() => toggleMode()}>Toggle Mode</Button>
               <Button title="/create/note" variant="link" size="default" onClick={() => navigate("/create/note")}>Create a new note</Button>
+              <Button title="/create/folder" variant={"link"} size={"default"} onClick={() => navigate("/create/folder")}>Create a new folder</Button>
             </CardAction>
           </CardHeader>
           <CardContent>
             <Button title="/about" variant="link" size="default" onClick={() => navigate("/about")}>About page</Button>
           </CardContent>
         </Card>
-
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 sm:grid-cols-1 pt-4">
           {noteCount ? 
             <>
