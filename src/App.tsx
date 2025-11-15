@@ -6,6 +6,7 @@ import Note from "./views/Note";
 import CreateNote from "./views/CreateNote";
 import EditNote from "./views/EditNote";
 import CreateFolder from "./views/CreateFolder";
+import Layout from "./components/sidebar/layout";
 import { useEffect } from "react";
 
 export function App() {
@@ -17,14 +18,40 @@ export function App() {
   }, []);
 
   return (
-     <BrowserRouter>
+    <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/note/:id" element={<Note/>} /> 
-        <Route path="/create/note" element={<CreateNote/>} />
-        <Route path="/edit/note/:id" element={<EditNote/>} />
-        <Route path="/create/folder" element={<CreateFolder/>}/>
+        {/* Nested rout to handle layout easier */}
+          <Route path="/" element={
+            <Layout >
+              <Home />
+            </Layout >
+          } />
+          <Route path="/about" element={
+            <Layout >
+              <About />
+            </Layout>
+            } />
+          <Route path="/note/:id" element={
+            <Layout >
+              <Note/>
+            </Layout>
+            } /> 
+          <Route path="/create/note" element={
+            
+            <Layout >
+              <CreateNote/>
+            </Layout>
+            } />
+          <Route path="/edit/note/:id" element={
+            <Layout >
+              <EditNote/>
+            </Layout>
+            } />
+          <Route path="/create/folder" element={
+            <Layout >
+              <CreateFolder/>
+            </Layout>
+            }/>
       </Routes>
     </BrowserRouter>
   );
