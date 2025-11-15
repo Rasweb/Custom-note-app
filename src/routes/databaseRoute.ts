@@ -34,19 +34,48 @@ INFO
   - Return rows that match the WHERE clause.
 */
 // For adding new columns
-function addNewColumn(){
+// function addNewColumn(){
   // db.run("ALTER TABLE table_name ADD COLUMN column_name column_type");
+// }
+
+function createFolderTable(){
+    db.run(`
+    CREATE TABLE IF NOT EXISTS folders (
+      id INTEGER PRIMARY KEY, 
+      name TEXT UNIQUE NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
 }
 
-function createTable(){
+function getAllFolders(){
+  const query = db.query("SELECT * FROM folders");
+  const result = query.all();
+  return result
+};
+
+async function createFolder(req: Bun.BunRequest) {
+  // Parse into json object
+  const body = await req.json(); 
+  const {name} = body;
+  // Insert the folder with the current timestamp
+  const createdAt = new Date().toISOString(); 
+  db.run("INSERT INTO folders (name, created_at, updated_at) VALUES (?, ?, ?)", [name, createdAt, createdAt]);
+}
+
+function createNoteTable(){
   db.run(`
     CREATE TABLE IF NOT EXISTS notes (
       id INTEGER PRIMARY KEY, 
       title TEXT NOT NULL,
       content TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )`);
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      folder_id INTEGER,
+      FOREIGN KEY (folder_id) REFERENCES folders(id)
+      )`
+    );
 };
 
 function getAllNotes(){
@@ -58,7 +87,9 @@ function getAllNotes(){
 async function createNote(req: Bun.BunRequest){
   const body = await req.json(); // Parse the stream into a JSON object
   const { title, content} = body;
-  db.run("INSERT INTO notes (title, content) VALUES (?, ?)", [title, content]);
+
+  const createdAt = new Date().toISOString();
+  db.run("INSERT INTO notes (title, content, created_at, updated_at) VALUES (?, ?, ?, ?)", [title, content, createdAt, createdAt]);
 };
 
 function getNote(currId: number){
@@ -132,7 +163,7 @@ export const databaseRoute = {
   "/database/notes": {
     async GET(req:  Bun.BunRequest) {
     // Create table if it dosent exist
-    createTable();
+    createNoteTable();
 
     const notes = getAllNotes();
     return Response.json(notes);
@@ -174,6 +205,23 @@ export const databaseRoute = {
   "/uploads/:filename": {
     async GET(req: Bun.BunRequest) {
       return serveStatic(req);
+    }
+  },
+    "/database/folders": {
+    async GET(req:  Bun.BunRequest) {
+    // Create table if it dosent exist
+    createFolderTable();
+
+    const folders = getAllFolders();
+    return Response.json(folders);
+    },
+
+    async POST(req: Bun.BunRequest){
+      await createFolder(req);
+      return new Response(JSON.stringify({ message: "Folder created successfully" }), {
+        status: 201,
+        headers: { "Content-Type": "application/json" },
+      });
     }
   },
 };

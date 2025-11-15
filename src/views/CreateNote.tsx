@@ -34,7 +34,7 @@ export default function CreateNote() {
         }
         catch(error){
             if(error  instanceof Error){
-                console.error("Failed to fetch notes:", error.message);
+                console.error("Failed to create note:", error.message);
                 setErrorHandle({bool: true, msg: error.message});
             } else {
                 console.error("Unknown error:", error);

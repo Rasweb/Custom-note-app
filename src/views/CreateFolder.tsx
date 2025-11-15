@@ -1,19 +1,44 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardAction } from "@/components/ui/card";;
 import {Button } from "../components/ui/button"
 import { useNavigate } from "react-router-dom";
-import { type ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "@/components/ui/input";
 
-/* TODO - Use shadcn components
-- Link: https://ui.shadcn.com/
-- Remove radix-ui and ui components except button.tsx
-- Replace everything
-*/
 export default function CreateFolder() {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    const [name, setTitle] = useState("");
 
-  function createFolderFunc(e: ChangeEvent<HTMLFormElement>){};
+    // CREATE TABLE IF NOT EXISTS folders (
+    //   id INTEGER PRIMARY KEY, 
+    //   name TEXT UNIQUE NOT NULL,
+    //   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    // );
+    async function createFolderFunc(e: ChangeEvent<HTMLFormElement>){
+        e.preventDefault();
+        console.log("Create folder func pressed");
+        try {
+            const response = await fetch("/database/folders", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    name: name,
+                })
+            });
+            if(response.ok){
+                navigate("/", {state: {message: "Create folder: success"}});
+            }
+            return await response.json();
+        } catch (error) {
+            if(error instanceof Error){
+                console.error("Failed to create folder:", error.message);
+                // error handling
+            } else {
+                console.error("Unknown error:", error);
+                // error handling
+            }
+        }
+    };
   return (
     <div className="container mx-auto p-8 text-center relative z-10">
         <Card className="mx-auto ">
@@ -26,29 +51,17 @@ export default function CreateFolder() {
             <CardContent>
                 <form  className="space-y-6" onSubmit={createFolderFunc}>
                     <div className="space-y-2">
-                        <Label htmlFor="title">Title</Label>
+                        <Label htmlFor="title">Name</Label>
                         <Input
                             id="title"
                             type="text"
                             placeholder="Note title"
-                            // onChange={(e) => setTitle(e.target.value)}
-                            // value={title}
-                            required
+                            onChange={(e) => setTitle(e.target.value)}
+                            value={name}
                         />
                     </div>
-                    <div className="space-y-2">
-
-                        {/* <Label htmlFor="content">Content</Label>
-                        <Textarea
-                            className="w-full h-64"
-                            id="content"
-                            placeholder="Write your note here..."
-                            onChange={(e) => setContent(e.target.value)}
-                            value={content}
-                        /> */}
-                    </div>
                     <Button type="submit" variant="outline" size={"default"}>
-                        Create Note
+                        Create Folder
                     </Button>
                 </form>
             </CardContent>
