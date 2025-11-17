@@ -8,7 +8,7 @@ import {
   SidebarMenuSub,
 } from "@/components/sidebar/sidebar"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
-import { ChevronDown } from "lucide-react";
+import { ChevronUp } from "lucide-react";
 import type { AppSidebarProps, FolderType, NoteType } from "../../types/types";
 
 export function AppSidebar({folderCount, notesCount, folders, notes}: AppSidebarProps) {
@@ -20,12 +20,12 @@ export function AppSidebar({folderCount, notesCount, folders, notes}: AppSidebar
           <>
             {folders.map((folder:FolderType) => (
               <SidebarMenu key={folder.id}>
-                <Collapsible defaultOpen className="group/collapsible">
+                <Collapsible className="group/collapsible">
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
                       <div className="flex items-center justify-between w-full">
                         <span>{folder.name}</span>
-                        <ChevronDown className="ml-2 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                        <ChevronUp className="ml-2 transition-transform group-data-[state=open]/collapsible:rotate-180" />
                       </div>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
@@ -34,6 +34,7 @@ export function AppSidebar({folderCount, notesCount, folders, notes}: AppSidebar
                         {notes.map((note: NoteType) => (
                           <SidebarMenuSub key={note.id}>
                             {note.title}
+                            {note.folder_id}
                           </SidebarMenuSub>
                         ))}
                       </>:

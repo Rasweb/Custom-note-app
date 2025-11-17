@@ -1,3 +1,5 @@
+import type { Dispatch, SetStateAction } from "react";
+
 export type AppSidebarProps = {
   folderCount: number;
   notesCount: number;
@@ -17,4 +19,16 @@ export type NoteType = {
   title: string;
   created_at: string;
   updated_at: string;
+  content:string;
+  folder_id: number;
 };
+
+export type FolderProps = {
+  setFolderCount:  Dispatch<SetStateAction<number>>;
+  setFolders: Dispatch<SetStateAction<never[]>>;
+}
+
+export type NoteProps ={
+  setNoteCount:  Dispatch<SetStateAction<number>>;
+  setNotes: Dispatch<SetStateAction<never[]>>;
+}

@@ -75,7 +75,7 @@ export default function EditNote() {
                 <div className="space-y-2">
                     <Label htmlFor="title">Title</Label>
                     {/* - Functional update to access previous state.
-                        - Creating new object, copuing the old, updating only title with new value
+                        - Creating new object, copying the old, updating only title with new value
                     */}
                     <Input
                         id="title"

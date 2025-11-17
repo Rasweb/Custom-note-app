@@ -44,6 +44,9 @@ export default function Note() {
       return;
     }
   };
+  async function changeFolder() {
+    console.log("Change folder");
+  }
     useEffect(() => {
         getNoteById(Number(id));
     }, []);
@@ -60,6 +63,8 @@ export default function Note() {
               <Button title="/" variant="link" size="default" onClick={() => navigate("/")}>Back to Notes</Button>
               <Button title="/edit/note" variant="link" size="default" onClick={() => navigate(`/edit/note/${note?.id}`)}>Edit note</Button>
               <Button title="/delete/note" variant="outline" size="default" onClick={() => deleteNoteById(Number(note?.id))}>Delete note</Button>
+              <Button title="" variant="outline" size="default" onClick={() => changeFolder()}>Change folder</Button>
+              
             </CardAction>
           </CardHeader>
           <CardContent className="whitespace-pre-wrap text-left">
