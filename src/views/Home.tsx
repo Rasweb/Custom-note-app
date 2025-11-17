@@ -2,20 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardAction } from "@/componen
 import {Button } from "../components/ui/button"
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-
-type NoteType = {
-  id: number;
-  title: string;
-  created_at: string;
-  updated_at: string;
-};
+import type { NoteType } from "@/types/types";
 
 export default function Home(){
     const navigate = useNavigate();
     const [noteCount, setNoteCount] = useState(0);
     const [notes, setNotes] = useState([]);
-    const [folderCount, setFolderCount] = useState(0);
-    const [folders, setFolders] = useState([]);
     const location = useLocation();
     const message = location.state?.message;
 
@@ -34,23 +26,6 @@ export default function Home(){
         console.error("Failed to fetch notes:", error);
       }
     };
-
-    async function getFolders(){
-      const foldersURL = "/database/folders";
-      try {
-        const response = await fetch(foldersURL, {
-          method: "GET",
-          headers: {"Content-Type": "application/json"},
-        });
-        const data = await response.json();
-        setFolderCount(data.length);
-        setFolders(data);
-        return data;
-      } catch (error) {
-        console.error("Failed to fetch folders", error);
-      }
-    }
-
     // Handle dark/light mode toggle using tailwind
     function toggleMode(){
       document.documentElement.classList.toggle("dark");
@@ -59,7 +34,6 @@ export default function Home(){
 
     useEffect(() => {
         getNotes();
-        getFolders();
     }, []); // [] ensures it only runs once on mount.
 
     return(
@@ -68,7 +42,12 @@ export default function Home(){
         {message && <div className="text-green-500">{message}</div>}
         <Card className="mx-auto ">
           <CardHeader  className="flex flex-col items-center gap-2">
-            {noteCount ? <CardTitle>Welcome there are {noteCount} notes found</CardTitle> : <CardTitle>No notes found</CardTitle>}
+            {/* Nr of notes and grammar check */}
+            <CardTitle>
+              {noteCount > 0
+                ? `Welcome, there ${noteCount > 1 ? "are" : "is"} ${noteCount} ${noteCount > 1 ? "notes": "note"} found `
+                : "No notes found"}
+            </CardTitle>
             <CardAction className="self-center">
               <Button title="dark/light mode" variant={"outline"} onClick={() => toggleMode()}>Toggle Mode</Button>
               <Button title="/create/note" variant="link" size="default" onClick={() => navigate("/create/note")}>Create a new note</Button>

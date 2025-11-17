@@ -3,14 +3,7 @@ import {Button } from "../components/ui/button"
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ReactMarkdown  from 'react-markdown'
-
-type NoteType = {
-    id: number;
-    title: string;
-    content: string;
-    created_at: string;
-    updated_at: string;
-};
+import type { NoteType } from "@/types/types";
 
 export default function Note() {
     const navigate = useNavigate();
