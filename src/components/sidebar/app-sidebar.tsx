@@ -16,7 +16,7 @@ export function AppSidebar({folderCount, notesCount, folders, notes}: AppSidebar
     <Sidebar>
       <SidebarHeader />
       <SidebarContent>
-        {folderCount ?
+        {folders.length ?
           <>
             {folders.map((folder:FolderType) => (
               <SidebarMenu key={folder.id}>
@@ -29,12 +29,11 @@ export function AppSidebar({folderCount, notesCount, folders, notes}: AppSidebar
                       </div>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
-                      {notesCount ? 
+                      {notes.length ? 
                       <>
                         {notes.map((note: NoteType) => (
                           <SidebarMenuSub key={note.id}>
-                            {note.title}
-                            {note.folder_id}
+                            {note.folder_id == folder.id ? <>{note.title}</>: <></>}
                           </SidebarMenuSub>
                         ))}
                       </>:

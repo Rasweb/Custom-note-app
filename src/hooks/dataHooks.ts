@@ -1,7 +1,7 @@
 
 import type { FolderProps, NoteProps } from "@/types/types";
 
-export async function getFolders({setFolderCount, setFolders}: FolderProps){
+export async function getFolders({setFolders}: FolderProps){
     const foldersURL = "/database/folders";
     try {
       const response = await fetch(foldersURL, {
@@ -9,7 +9,6 @@ export async function getFolders({setFolderCount, setFolders}: FolderProps){
         headers: {"Content-Type": "application/json"},
       });
       const data = await response.json();
-      setFolderCount(data.length);
       setFolders(data);
       console.log("Data", data);
       return data;
@@ -18,7 +17,7 @@ export async function getFolders({setFolderCount, setFolders}: FolderProps){
     }
 };
 
-export async function getNotes({setNoteCount, setNotes}:NoteProps){
+export async function getNotes({setNotes}:NoteProps){
     const notesURL = "/database/notes";
     try{
       const response = await fetch(notesURL, {
@@ -26,7 +25,6 @@ export async function getNotes({setNoteCount, setNotes}:NoteProps){
         headers: {"Content-Type": "application/json"},
       });
       const data = await response.json();
-      setNoteCount(data.length);
       setNotes(data);
       return data;
     } catch(error){

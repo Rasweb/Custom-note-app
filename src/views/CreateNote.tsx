@@ -17,7 +17,6 @@ export default function CreateNote() {
         content: "",
         folder: ""
     })
-    const [folderCount, setFolderCount] = useState(0);
     const [folders, setFolders] = useState([]);
     const [errorHandle, setErrorHandle] = useState({
         bool: false,
@@ -58,7 +57,7 @@ export default function CreateNote() {
         }
     };
     useEffect(() => {
-        getFolders({setFolderCount, setFolders});
+        getFolders({setFolders});
     }, []);
   return (
     <div className="container mx-auto p-8 text-center relative z-10">
@@ -101,7 +100,7 @@ export default function CreateNote() {
                         <SelectContent>
                             <SelectGroup>
                                 <SelectLabel>Folders</SelectLabel>
-                                {folderCount ? 
+                                {folders.length ? 
                                     <>
                                         {folders.map((folder: FolderType) => (
                                             <div key={folder.id}>
