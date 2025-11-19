@@ -89,7 +89,9 @@ async function createNote(req: Bun.BunRequest){
   const { title, content, folder_id} = body;
 
   const createdAt = new Date().toISOString();
-  db.run("INSERT INTO notes (title, content, created_at, updated_at, folder_id) VALUES (?, ?, ?, ?, ?)", [title, content, createdAt, createdAt, folder_id]);
+  const updatedAt = new Date().toISOString();
+
+  db.run("INSERT INTO notes (title, content, created_at, updated_at, folder_id) VALUES (?, ?, ?, ?, ?)", [title, content, createdAt, updatedAt, folder_id]);
 };
 
 function getNote(currId: number){

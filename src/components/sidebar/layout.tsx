@@ -10,7 +10,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const { isMobile } = useSidebar()
     
     function handleClick(){
-      console.log("Sidebar btn pressed");
       getFolders({setFolders});
       getNotes({setNotes});
     }
@@ -19,7 +18,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex h-screen w-screen">
+      <div className="flex min-h-screen w-screen">
         <AppSidebar folderCount={folders.length} notesCount={folders.length} folders={folders} notes={notes}/>
         <main className="flex-1 overflow-auto">
           <MobileSidebarTrigger />

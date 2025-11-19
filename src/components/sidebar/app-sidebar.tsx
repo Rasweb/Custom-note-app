@@ -29,17 +29,16 @@ export function AppSidebar({folderCount, notesCount, folders, notes}: AppSidebar
                       </div>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
-                      {notes.length ? 
-                      <>
-                        {notes.map((note: NoteType) => (
-                          <SidebarMenuSub key={note.id}>
-                            {note.folder_id == folder.id ? <>{note.title}</>: <></>}
-                          </SidebarMenuSub>
-                        ))}
-                      </>:
-                          <SidebarMenuSub>
-                            No notes found
-                          </SidebarMenuSub>
+                      {notes.length ?
+                        notes.map((note: NoteType) => (
+                          note.folder_id === folder.id ? (
+                            <SidebarMenuSub key={note.id}>
+                              {note.title}
+                            </SidebarMenuSub>
+                          ) : null
+                        ))
+                        :
+                          "No notes found"
                       }
                     </CollapsibleContent>
                   </SidebarMenuItem>
