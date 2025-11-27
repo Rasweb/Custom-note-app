@@ -1,39 +1,23 @@
-import { Card, CardContent, CardHeader, CardTitle, CardAction } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {Button } from "../components/ui/button"
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import type { NoteType } from "@/types/types";
+import { getFolders } from "@/hooks/dataHooks";
+import { HomeHeader } from "@/components/Home/HomeHeader";
+import { HomeContent } from "@/components/Home/HomeContent";
+import { getNotes } from "@/hooks/dataHooks";
 
 export default function Home(){
     const navigate = useNavigate();
     const [noteCount, setNoteCount] = useState(0);
     const [notes, setNotes] = useState([]);
     const location = useLocation();
+    const [folders, setFolders] = useState([]);
     const message = location.state?.message;
 
-    async function getNotes(){
-      const notesURL = "/database/notes";
-      try{
-        const response = await fetch(notesURL, {
-          method: "GET",
-          headers: {"Content-Type": "application/json"},
-        });
-        const data = await response.json();
-        setNoteCount(data.length);
-        setNotes(data);
-        return data;
-      } catch(error){
-        console.error("Failed to fetch notes:", error);
-      }
-    };
-    // Handle dark/light mode toggle using tailwind
-    function toggleMode(){
-      document.documentElement.classList.toggle("dark");
-      localStorage.theme = document.documentElement.classList.contains("dark") ? "dark" : "light";
-    }
-
     useEffect(() => {
-        getNotes();
+        getNotes({setNotes});
+        getFolders({setFolders});
     }, []); // [] ensures it only runs once on mount.
 
     return(
@@ -41,48 +25,12 @@ export default function Home(){
         {/* TODO - Temp status msg */}
         {message && <div className="text-green-500">{message}</div>}
         <Card className="mx-auto ">
-          <CardHeader  className="flex flex-col items-center gap-2">
-            {/* Nr of notes and grammar check */}
-            <CardTitle>
-              {noteCount > 0
-                ? `Welcome, there ${noteCount > 1 ? "are" : "is"} ${noteCount} ${noteCount > 1 ? "notes": "note"} found `
-                : "No notes found"}
-            </CardTitle>
-            <CardAction className="self-center">
-              <Button title="dark/light mode" variant={"outline"} onClick={() => toggleMode()}>Toggle Mode</Button>
-              <Button title="/create/note" variant="link" size="default" onClick={() => navigate("/create/note")}>Create a new note</Button>
-              <Button title="/create/folder" variant={"link"} size={"default"} onClick={() => navigate("/create/folder")}>Create a new folder</Button>
-            </CardAction>
-          </CardHeader>
+          <HomeHeader noteCount={noteCount}></HomeHeader>
           <CardContent>
             <Button title="/about" variant="link" size="default" onClick={() => navigate("/about")}>About page</Button>
           </CardContent>
         </Card>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 sm:grid-cols-1 pt-4">
-          {noteCount ? 
-            <>
-              {notes.map((note: NoteType) => (
-                <Card key={note.id} className="w-full cursor-pointer hover:shadow-md transition"
-                  onClick={() => navigate(`/note/${note.id}`)}>
-                  <CardHeader>
-                    <CardTitle>
-                      <div>{note.title}</div>
-                      <div>{note.created_at}</div>
-                    </CardTitle>
-                  </CardHeader>
-                </Card>
-              ))}
-            </>
-          : 
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  No notes to display
-                </CardTitle>
-              </CardHeader>
-            </Card>
-          }
-        </div>
+          <HomeContent noteCount={noteCount} notes={notes}></HomeContent>
       </div>
     )
 }

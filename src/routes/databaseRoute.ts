@@ -37,6 +37,10 @@ INFO
 // function addNewColumn(){
   // db.run("ALTER TABLE table_name ADD COLUMN column_name column_type");
 // }
+function getTables(){
+  createFolderTable();
+  createNoteTable();
+}
 
 function createFolderTable(){
     db.run(`
@@ -165,7 +169,7 @@ export const databaseRoute = {
   "/database/notes": {
     async GET(req:  Bun.BunRequest) {
     // Create table if it dosent exist
-    createNoteTable();
+    getTables();
 
     const notes = getAllNotes();
     return Response.json(notes);
@@ -212,7 +216,7 @@ export const databaseRoute = {
     "/database/folders": {
     async GET(req:  Bun.BunRequest) {
     // Create table if it dosent exist
-    createFolderTable();
+    getTables();
 
     const folders = getAllFolders();
     return Response.json(folders);
