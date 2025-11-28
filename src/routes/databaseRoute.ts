@@ -1,8 +1,7 @@
-import { Database } from "bun:sqlite"
 import { join } from "path";
-// Open connection to sqlite database
-const db = new Database("mydb.sqlite");
-
+// named imports
+import * as fileRoutes from "./fileRoutes"
+import * as folderRoutes from "./folderRoutes"
 /* Bun SQLite
 - Info
   - https://bun.com/docs/runtime/sqlite
@@ -38,93 +37,9 @@ INFO
   // db.run("ALTER TABLE table_name ADD COLUMN column_name column_type");
 // }
 function getTables(){
-  createFolderTable();
-  createNoteTable();
-}
-
-function createFolderTable(){
-    db.run(`
-    CREATE TABLE IF NOT EXISTS folders (
-      id INTEGER PRIMARY KEY, 
-      name TEXT UNIQUE NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    );
-  `);
-}
-
-function getAllFolders(){
-  const query = db.query("SELECT * FROM folders");
-  const result = query.all();
-  return result
-};
-
-async function createFolder(req: Bun.BunRequest) {
-  // Parse into json object
-  const body = await req.json(); 
-  const {name} = body;
-  // Insert the folder with the current timestamp
-  const createdAt = new Date().toISOString(); 
-  db.run("INSERT INTO folders (name, created_at, updated_at) VALUES (?, ?, ?)", [name, createdAt, createdAt]);
-}
-
-function createNoteTable(){
-  db.run(`
-    CREATE TABLE IF NOT EXISTS notes (
-      id INTEGER PRIMARY KEY, 
-      title TEXT NOT NULL,
-      content TEXT,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      folder_id INTEGER,
-      FOREIGN KEY (folder_id) REFERENCES folders(id)
-      )`
-    );
-};
-
-function getAllNotes(){
-  const query = db.query("SELECT * FROM notes");
-  const result = query.all();
-  return result;
-};
-
-async function createNote(req: Bun.BunRequest){
-  const body = await req.json(); // Parse the stream into a JSON object
-  const { title, content, folder_id} = body;
-
-  const createdAt = new Date().toISOString();
-  const updatedAt = new Date().toISOString();
-
-  db.run("INSERT INTO notes (title, content, created_at, updated_at, folder_id) VALUES (?, ?, ?, ?, ?)", [title, content, createdAt, updatedAt, folder_id]);
-};
-
-function getNote(currId: number){
-  const id = currId;
-  const query = db.query(`SELECT * FROM notes WHERE id = ?`);
-  const result = query.all(id);
-  return result;
-};
-
-async function updateNote(req: Bun.BunRequest){
-  const body = await req.json();
-  const { id, title, content } = body;
-  const query = db.query(`
-    UPDATE notes SET 
-      title = ?, 
-      content = ?, 
-      updated_at = CURRENT_TIMESTAMP 
-      WHERE id = ?
-      RETURNING *;
-  `);   
-  const updatedNote = query.get(title, content, id);
-  return updatedNote;
-};
-
-function deleteNote(currId: number){
-  const noteId = currId;
-  const sql = `DELETE FROM notes WHERE id = :id;`
-  const stmt = db.prepare(sql);
-  stmt.run(noteId);
+  folderRoutes.createFolderTable();
+  // createNoteTable();
+  fileRoutes.createNoteTable();
 }
 
 // process image upload from a form submission
@@ -171,12 +86,12 @@ export const databaseRoute = {
     // Create table if it dosent exist
     getTables();
 
-    const notes = getAllNotes();
+    const notes = fileRoutes.getAllNotes();
     return Response.json(notes);
     },
 
     async POST(req: Bun.BunRequest){
-      await createNote(req);
+      await fileRoutes.createNote(req);
       return new Response(JSON.stringify({ message: "Note created successfully" }), {
         status: 201,
         headers: { "Content-Type": "application/json" },
@@ -186,11 +101,11 @@ export const databaseRoute = {
   "/database/note/:id":{
     async GET(req: Bun.BunRequest){
     const id = idFix(req);
-    const note = await getNote(id);
+    const note = await fileRoutes.getNote(id);
     return Response.json(note);
     },
     async PUT(req: Bun.BunRequest){
-      const updatedNote = await updateNote(req);
+      const updatedNote = await fileRoutes.updateNote(req);
       return new Response(JSON.stringify(updatedNote), {
         status: 200,
         headers: { "Content-Type": "application/json" },
@@ -198,7 +113,7 @@ export const databaseRoute = {
     },
     async DELETE(req: Bun.BunRequest){
       const id = idFix(req);
-      await deleteNote(id);
+      await fileRoutes.deleteNote(id);
       return Response.json("Removed note");
     }
   },
@@ -218,12 +133,12 @@ export const databaseRoute = {
     // Create table if it dosent exist
     getTables();
 
-    const folders = getAllFolders();
+    const folders = folderRoutes.getAllFolders();
     return Response.json(folders);
     },
 
     async POST(req: Bun.BunRequest){
-      await createFolder(req);
+      await folderRoutes.createFolder(req);
       return new Response(JSON.stringify({ message: "Folder created successfully" }), {
         status: 201,
         headers: { "Content-Type": "application/json" },

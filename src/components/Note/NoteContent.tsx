@@ -1,9 +1,7 @@
- 
-import { CardContent } from "../ui/card";
 import ReactMarkdown  from 'react-markdown'
-import type { NoteType } from "@/types/types";
+import * as Types from "@/types/types"
 
-export function NoteContent({note}: {note: NoteType}) { 
+export function NoteContent({note}: {note: Types.NoteType}) { 
     return (
         <>
             <ReactMarkdown

@@ -1,0 +1,61 @@
+import { Database } from "bun:sqlite"
+const db = new Database("mydb.sqlite");
+
+export const createNoteTable = () => {
+  db.run(`
+    CREATE TABLE IF NOT EXISTS notes (
+      id INTEGER PRIMARY KEY, 
+      title TEXT NOT NULL,
+      content TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      folder_id INTEGER,
+      FOREIGN KEY (folder_id) REFERENCES folders(id)
+      )`
+    );
+};
+
+export const getAllNotes = () =>{
+  const query = db.query("SELECT * FROM notes");
+  const result = query.all();
+  return result;
+};
+
+export const createNote = async (req: Bun.BunRequest) => {
+  const body = await req.json(); // Parse the stream into a JSON object
+  const { title, content, folder_id} = body;
+
+  const createdAt = new Date().toISOString();
+  const updatedAt = new Date().toISOString();
+
+  db.run("INSERT INTO notes (title, content, created_at, updated_at, folder_id) VALUES (?, ?, ?, ?, ?)", [title, content, createdAt, updatedAt, folder_id]);
+};
+
+export const getNote = (currId: number) => {
+  const id = currId;
+  const query = db.query(`SELECT * FROM notes WHERE id = ?`);
+  const result = query.all(id);
+  return result;
+};
+
+export const updateNote = async (req: Bun.BunRequest) => {
+  const body = await req.json();
+  const { id, title, content } = body;
+  const query = db.query(`
+    UPDATE notes SET 
+      title = ?, 
+      content = ?, 
+      updated_at = CURRENT_TIMESTAMP 
+      WHERE id = ?
+      RETURNING *;
+  `);   
+  const updatedNote = query.get(title, content, id);
+  return updatedNote;
+};
+
+export const deleteNote = (currId: number) => {
+  const noteId = currId;
+  const sql = `DELETE FROM notes WHERE id = :id;`
+  const stmt = db.prepare(sql);
+  stmt.run(noteId);
+}

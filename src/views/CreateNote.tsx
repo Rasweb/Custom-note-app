@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardAction } from "@/components/ui/card";;
+import { Card, CardContent, CardHeader, CardTitle, CardAction } from "@/components/ui/card";;
 import {Button } from "../components/ui/button"
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -6,9 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getFolders } from "@/hooks/dataHooks";
-import type { FolderType } from "@/types/types";
-import { SelectGroup, SelectLabel, SelectSeparator } from "@radix-ui/react-select";
+import * as dataHooks from "@/hooks/dataHooks"
+import * as Types from "@/types/types"
+import { SelectGroup, SelectLabel } from "@radix-ui/react-select";
 
 export default function CreateNote() {
     const navigate = useNavigate();
@@ -57,7 +57,7 @@ export default function CreateNote() {
         }
     };
     useEffect(() => {
-        getFolders({setFolders});
+        dataHooks.getFolders({setFolders});
     }, []);
   return (
     <div className="container mx-auto p-8 text-center relative z-10">
@@ -102,7 +102,7 @@ export default function CreateNote() {
                                 <SelectLabel>Folders</SelectLabel>
                                 {folders.length ? 
                                     <>
-                                        {folders.map((folder: FolderType) => (
+                                        {folders.map((folder: Types.FolderType) => (
                                             <div key={folder.id}>
                                                 <SelectItem key={folder.id} value={String(folder.id)}>{folder.name}</SelectItem>
                                             </div>

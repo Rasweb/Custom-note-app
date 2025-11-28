@@ -1,17 +1,17 @@
 import { Card, CardContent} from "@/components/ui/card";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import type { NoteType } from "@/types/types";
+import * as Types from "@/types/types"
 import { NoteHeader } from "@/components/Note/NoteHeader";
 import { NoteContent } from "@/components/Note/NoteContent";
-import { getNoteById } from "@/hooks/dataHooks";
+import * as dataHooks from "@/hooks/dataHooks"
 
 export default function Note() {
     const {id} = useParams<{id: string}>();
-    const [note, setNote] = useState<NoteType>();
+    const [note, setNote] = useState<Types.NoteType>();
 
     useEffect(() => {
-        getNoteById(Number(id), setNote);
+        dataHooks.getNoteById(Number(id), setNote);
     }, []);
 
   return (
