@@ -5,16 +5,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState, type ChangeEvent } from "react";
+import { ViewMarkdown } from "@/components/markdown/ViewMarkdown";
+import * as Types from "@/types/types"
 
 export default function EditNote() {
     const navigate = useNavigate();
     const { id } = useParams<{id: string}>();
-    const [updateNote, setUpdateNote] = useState({
-        id: 0,
-        title: "",
-        content: "",
-        updated_at: ""
-    });
+    const [updateNote, setUpdateNote ] = useState<Types.NoteType>({
+  id: 0,
+  title: "",
+  content: "",
+  created_at: "",
+  updated_at: "",
+  folder_id: 0
+});
     
     async function getNoteById(id: number){
         try{
@@ -26,8 +30,10 @@ export default function EditNote() {
             setUpdateNote({
                 id: data[0].id,
                 title: data[0].title,
+                created_at: "",
+                updated_at: data[0].updated_at,
                 content: data[0].content,
-                updated_at: data[0].updated_at
+                folder_id: 1
             });
         }
         catch(error){
@@ -38,18 +44,18 @@ export default function EditNote() {
     async function updateNoteById(e: ChangeEvent<HTMLFormElement>){
         e.preventDefault();
         try{
-            const response = await fetch(`/database/note/${updateNote.id}` ,{
+            const response = await fetch(`/database/note/${updateNote?.id}` ,{
                 method: "PUT",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({
-                    id: updateNote.id,
-                    title: updateNote.title,
-                    content: updateNote.content
+                    id: updateNote?.id,
+                    title: updateNote?.title,
+                    content: updateNote?.content
             }),
         });
         
         if(response.ok){
-            navigate(`/note/${updateNote.id}`, {state: {message: "Edit note: success"}});
+            navigate(`/note/${updateNote?.id}`, {state: {message: "Edit note: success"}});
         }
         return await response.json();
         } catch(error){
@@ -81,8 +87,8 @@ export default function EditNote() {
                         id="title"
                         type="text"
                         placeholder="Note title"
-                        onChange={(e) => setUpdateNote(prev => ({...prev, title:e.target.value}))}
-                        value={updateNote.title}
+                        onChange={(e) => setUpdateNote(prev => ({ ...prev, title: e.target.value }))}
+                        value={updateNote?.title}
                         required
                     />
                 </div>
@@ -92,14 +98,20 @@ export default function EditNote() {
                         className="w-full h-64"
                         id="content"
                         placeholder="Write your note here..."
-                        onChange={(e) => setUpdateNote(prev => ({...prev, content:e.target.value}))}
-                        value={updateNote.content}
+                        onChange={(e) => setUpdateNote(prev => ({ ...prev, content: e.target.value }))}
+                        value={updateNote?.content}
                         />
                 </div>
                 <Button type="submit" variant="outline" size={"default"}>
                     Update Note
                 </Button>
             </form>
+            <div className="mt-6 text-left">
+  <h2 className="text-lg font-semibold mb-2">Preview</h2>
+  {updateNote && 
+   <ViewMarkdown note={updateNote}></ViewMarkdown>
+  }
+</div>
           </CardContent>
         </Card>
     </div>
