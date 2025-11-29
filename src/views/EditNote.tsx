@@ -106,7 +106,7 @@ export default function EditNote() {
                     Update Note
                 </Button>
             </form>
-            <div className="mt-6 text-left">
+            <div className="prose prose-invert">
   <h2 className="text-lg font-semibold mb-2">Preview</h2>
   {updateNote && 
    <ViewMarkdown note={updateNote}></ViewMarkdown>

@@ -4,5 +4,7 @@ export default {
     extend: {},
   },
   darkMode: 'class', // 👈 Enable class-based dark mode
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography')
+  ],
 }

@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import * as dataHooks from "@/hooks/dataHooks"
 import * as Types from "@/types/types"
 import { SelectGroup, SelectLabel } from "@radix-ui/react-select";
+import { ViewMarkdown } from "@/components/markdown/ViewMarkdown";
 
 export default function CreateNote() {
     const navigate = useNavigate();
@@ -120,6 +121,12 @@ export default function CreateNote() {
                     Create Note
                 </Button>
             </form>
+                        <div className="mt-6 text-left">
+              <h2 className="text-lg font-semibold mb-2">Preview</h2>
+              {formVals && 
+               <ViewMarkdown note={formVals}></ViewMarkdown>
+              }
+            </div>
           </CardContent>
         </Card>
     </div>
