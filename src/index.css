@@ -49,3 +49,14 @@ body::before {
     animation: none !important;
   }
 }
+
+.someSTyle {
+  color: white;
+  ._code_1tncs_52 {
+    color: black;
+  }
+}
+
+.toolbarStyle{
+  width: 40rem;
+}
