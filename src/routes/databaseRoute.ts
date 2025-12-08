@@ -36,40 +36,26 @@ INFO
 // function addNewColumn(){
   // db.run("ALTER TABLE table_name ADD COLUMN column_name column_type");
 // }
+
 function getTables(){
   folderRoutes.createFolderTable();
-  // createNoteTable();
   fileRoutes.createNoteTable();
 }
 
 // process image upload from a form submission
 async function handleImageUpload(req: Bun.BunRequest) {
   const formData = await req.formData();
-  const file = formData.get("image");
+  const file = formData.get("image") as File;
 
   if (!(file instanceof File)) {
     return new Response("No image uploaded", { status: 400 });
   }
 
-  const buffer = await file.arrayBuffer();
   const fileName = `${Date.now()}-${file.name}`;
-  const dirPath = join("static", "images");
-  const filePath = join(dirPath, fileName);
-
-  await Bun.write(filePath, Buffer.from(buffer));
-  return Response.json({ url: `/uploads/${fileName}` });
-}
-
-async function serveStatic(req: Request) {
-  const url = new URL(req.url);
-  const filePath = join("static", "images", url.pathname.replace("/uploads/", ""));
-  try {
-    const file = Bun.file(filePath);
-    if (!(await file.exists())) throw new Error("Not found");
-    return new Response(file);
-  } catch {
-    return new Response("File not found", { status: 404 });
-  }
+  const filePath = join(import.meta.dir, "../../images", fileName);
+ 
+  await Bun.write(filePath, file);
+  return Response.json({ url: `/images/${fileName}` });
 }
 
 // handle the id:  :1
@@ -117,18 +103,19 @@ export const databaseRoute = {
       return Response.json("Removed note");
     }
   },
+  // Image upload route
   "/upload/image": {
     async POST(req: Bun.BunRequest) {
       return handleImageUpload(req);
     }
   },
-
-  "/uploads/:filename": {
-    async GET(req: Bun.BunRequest) {
-      return serveStatic(req);
-    }
+  // Handle image paths
+  "/images/*":(req:Bun.BunRequest) => {
+    const path = new URL(req.url).pathname;
+    const decodedPath = decodeURIComponent(path);
+    return new Response(Bun.file(`.${decodedPath}`));
   },
-    "/database/folders": {
+  "/database/folders": {
     async GET(req:  Bun.BunRequest) {
     // Create table if it dosent exist
     getTables();

@@ -7,6 +7,21 @@ import '@mdxeditor/editor/style.css'
 // TODO - Check here for more toolbar stuff: https://mdxeditor.dev/editor/docs/customizing-toolbar
 // TODO - Handle responsiveness
 export function ViewMarkdown({note}:{note: Types.NoteType}){
+    async function imageUploadHandler(image: File){
+        const formData = new FormData();
+        formData.append("image", image);
+        try {
+            const response = await fetch("/upload/image", {
+                method: "POST",
+                body: formData
+            });
+            const json = (await response.json()) as {url: string};
+            return json.url;
+        } catch (error){
+            console.error("Upload error:",error);
+            throw error;
+        }
+    }
     return (
         <div >
             <MDXEditor markdown={note?.content ?? "# empty"} plugins={
@@ -18,7 +33,7 @@ export function ViewMarkdown({note}:{note: Types.NoteType}){
                     linkPlugin(),
                     linkDialogPlugin(),
                     codeBlockPlugin(),
-                    imagePlugin(),
+                    imagePlugin({imageUploadHandler}),
                     tablePlugin(),
                     toolbarPlugin({
                         toolbarClassName: 'toolbarStyle',
