@@ -1,12 +1,51 @@
 import * as Types from "@/types/types"
-import {BlockTypeSelect, BoldItalicUnderlineToggles, CodeToggle, CreateLink, InsertFrontmatter, InsertImage, InsertTable, InsertThematicBreak, ListsToggle, MDXEditor, UndoRedo, codeBlockPlugin, frontmatterPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, toolbarPlugin } from '@mdxeditor/editor'
+import {BlockTypeSelect, BoldItalicUnderlineToggles, CodeToggle, CreateLink, InsertFrontmatter, InsertImage, InsertTable, InsertThematicBreak, ListsToggle, MDXEditor, UndoRedo, codeBlockPlugin, frontmatterPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, toolbarPlugin, type MDXEditorMethods } from '@mdxeditor/editor'
 import '@mdxeditor/editor/style.css'
+import { useRef } from "react";
 
-// TODO - Add autosave using useffect and timer
 // TODO - modify the someSTyle class for ligth mode and more
 // TODO - Check here for more toolbar stuff: https://mdxeditor.dev/editor/docs/customizing-toolbar
 // TODO - Handle responsiveness
+// TODO - Save to the sqlite database
 export function ViewMarkdown({note}:{note: Types.NoteType}){
+    /* useRef
+        - Persists for the full lifetime of the component
+        - Changing a property does not trigger a re-render
+        - ref.current to access or modify the stored variable
+    */
+
+    const contentRef = useRef(note?.content ?? "# empty");
+    const lastSavedRef = useRef("");
+    const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    const handleChange = (newContent: string) => {
+        contentRef.current = newContent;
+        debounceSave();
+    };
+
+    const debounceSave = () => {
+        if(saveTimeoutRef.current){
+            clearTimeout(saveTimeoutRef.current);
+        }
+
+        saveTimeoutRef.current = setTimeout(() => {
+            saveContent(contentRef.current);
+        }, 1500) // autosave delay
+    }
+
+    // Save to sqlite database
+    const saveContent = async (content: string) => {
+        // Only save if content changed
+        if(content == lastSavedRef.current){
+            return
+        }
+
+        console.log("Autosaving: \n", content);
+
+        // Update last saved value;
+        lastSavedRef.current = content;
+    }
+
     async function imageUploadHandler(image: File){
         const formData = new FormData();
         formData.append("image", image);
@@ -24,7 +63,10 @@ export function ViewMarkdown({note}:{note: Types.NoteType}){
     }
     return (
         <div >
-            <MDXEditor markdown={note?.content ?? "# empty"} plugins={
+            <MDXEditor 
+                markdown={contentRef.current} 
+                onChange={handleChange}
+                plugins={
                     [headingsPlugin(),
                     listsPlugin(),
                     markdownShortcutPlugin(),
