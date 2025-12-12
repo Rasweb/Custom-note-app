@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import * as dataHooks from "@/hooks/dataHooks"
 import * as Types from "@/types/types"
 import { SelectGroup, SelectLabel } from "@radix-ui/react-select";
-import { ViewMarkdown } from "@/components/markdown/ViewMarkdown";
+import { ViewMarkdown } from "@/components/markdown/Markdown";
 
 export default function CreateNote() {
     const navigate = useNavigate();

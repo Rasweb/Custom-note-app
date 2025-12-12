@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState, type ChangeEvent } from "react";
-import { ViewMarkdown } from "@/components/markdown/ViewMarkdown";
+import { ViewMarkdown } from "@/components/markdown/Markdown";
 import * as Types from "@/types/types"
 
 export default function EditNote() {

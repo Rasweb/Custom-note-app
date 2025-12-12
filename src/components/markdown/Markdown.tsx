@@ -1,5 +1,5 @@
 import * as Types from "@/types/types"
-import {BlockTypeSelect, BoldItalicUnderlineToggles, CodeToggle, CreateLink, InsertFrontmatter, InsertImage, InsertTable, InsertThematicBreak, ListsToggle, MDXEditor, UndoRedo, codeBlockPlugin, frontmatterPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, toolbarPlugin, type MDXEditorMethods } from '@mdxeditor/editor'
+import {BlockTypeSelect, BoldItalicUnderlineToggles, CodeToggle, CreateLink, InsertImage, InsertTable, InsertThematicBreak, ListsToggle, MDXEditor, UndoRedo, codeBlockPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, toolbarPlugin } from '@mdxeditor/editor'
 import '@mdxeditor/editor/style.css'
 import { useRef } from "react";
 
@@ -40,11 +40,25 @@ export function ViewMarkdown({note}:{note: Types.NoteType}){
             return
         }
 
-        console.log("Autosaving: \n", content);
-
-        // Update last saved value;
-        lastSavedRef.current = content;
-    }
+        try{
+            const response = await fetch(`/database/note/${note.id}`, {
+                method: "PUT",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    id: note.id,
+                    content: content
+                }),
+            });
+            if(response.ok){
+                console.log("Autosave success");
+            }
+            // Update last saved value;
+            lastSavedRef.current = content;
+            // return await response.json();
+        } catch(error) {
+            console.error("Failted to autosave note: ", error);
+        }
+    };
 
     async function imageUploadHandler(image: File){
         const formData = new FormData();

@@ -91,11 +91,16 @@ export const databaseRoute = {
     return Response.json(note);
     },
     async PUT(req: Bun.BunRequest){
-      const updatedNote = await fileRoutes.updateNote(req);
-      return new Response(JSON.stringify(updatedNote), {
+      const editNote = await fileRoutes.editNote(req);
+      return new Response(JSON.stringify(editNote), {
         status: 200,
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
       });
+      // const updatedNote = await fileRoutes.updateNote(req);
+      // return new Response(JSON.stringify(updatedNote), {
+      //   status: 200,
+      //   headers: { "Content-Type": "application/json" },
+      // });
     },
     async DELETE(req: Bun.BunRequest){
       const id = idFix(req);

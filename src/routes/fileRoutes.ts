@@ -53,6 +53,21 @@ export const updateNote = async (req: Bun.BunRequest) => {
   return updatedNote;
 };
 
+
+export const editNote = async (req: Bun.BunRequest) => {
+  const body = await req.json();
+  const {id, content} = body;
+  const query = db.query (`
+    UPDATE notes SET
+      content = ?,
+      updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+      RETURNING *;
+  `);
+  const updateNote = query.get(content, id);
+  return updateNote;
+}
+
 export const deleteNote = (currId: number) => {
   const noteId = currId;
   const sql = `DELETE FROM notes WHERE id = :id;`
