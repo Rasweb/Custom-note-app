@@ -77,8 +77,8 @@ export const databaseRoute = {
     },
 
     async POST(req: Bun.BunRequest){
-      await fileRoutes.createNote(req);
-      return new Response(JSON.stringify({ message: "Note created successfully" }), {
+      const createNote = await fileRoutes.createNote(req);
+      return new Response(JSON.stringify(createNote), {
         status: 201,
         headers: { "Content-Type": "application/json" },
       });
@@ -96,11 +96,6 @@ export const databaseRoute = {
         status: 200,
         headers: {"Content-Type": "application/json"},
       });
-      // const updatedNote = await fileRoutes.updateNote(req);
-      // return new Response(JSON.stringify(updatedNote), {
-      //   status: 200,
-      //   headers: { "Content-Type": "application/json" },
-      // });
     },
     async DELETE(req: Bun.BunRequest){
       const id = idFix(req);
@@ -137,5 +132,12 @@ export const databaseRoute = {
       });
     }
   },
+  "/database/folder/:id": {
+    async GET(req: Bun.BunRequest){
+      const id = idFix(req);
+      const folder = await folderRoutes.getFolderById(id);
+      return Response.json(folder);
+    }
+  }
 };
 

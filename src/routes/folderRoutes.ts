@@ -12,12 +12,6 @@ export const createFolderTable = () => {
   `);
 }
 
-export const getAllFolders = () => {
-  const query = db.query("SELECT * FROM folders");
-  const result = query.all();
-  return result
-};
-
 export const createFolder = async (req: Bun.BunRequest) => {
   // Parse into json object
   const body = await req.json(); 
@@ -26,3 +20,16 @@ export const createFolder = async (req: Bun.BunRequest) => {
   const createdAt = new Date().toISOString(); 
   db.run("INSERT INTO folders (name, created_at, updated_at) VALUES (?, ?, ?)", [name, createdAt, createdAt]);
 }
+
+export const getAllFolders = () => {
+  const query = db.query("SELECT * FROM folders");
+  const result = query.all();
+  return result
+};
+
+export const getFolderById = (currId: number) => {
+  const id = currId;
+  const query = db.query(`SELECT * FROM folders WHERE id = ?`);
+  const result = query.all(id);
+  return result;
+};

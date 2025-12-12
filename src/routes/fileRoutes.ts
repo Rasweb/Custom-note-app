@@ -28,7 +28,8 @@ export const createNote = async (req: Bun.BunRequest) => {
   const createdAt = new Date().toISOString();
   const updatedAt = new Date().toISOString();
 
-  db.run("INSERT INTO notes (title, content, created_at, updated_at, folder_id) VALUES (?, ?, ?, ?, ?)", [title, content, createdAt, updatedAt, folder_id]);
+  const result = db.run("INSERT INTO notes (title, content, created_at, updated_at, folder_id) VALUES (?, ?, ?, ?, ?)", [title, content, createdAt, updatedAt, folder_id]);
+  return {id: result.lastInsertRowid};
 };
 
 export const getNote = (currId: number) => {

@@ -3,19 +3,16 @@ import {Button } from "../components/ui/button"
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import * as dataHooks from "@/hooks/dataHooks"
 import * as Types from "@/types/types"
 import { SelectGroup, SelectLabel } from "@radix-ui/react-select";
-import { ViewMarkdown } from "@/components/markdown/Markdown";
 
 export default function CreateNote() {
     const navigate = useNavigate();
     const [formVals, setFormVals] = useState({
         title: "",
-        content: "",
         folder: ""
     })
     const [folders, setFolders] = useState([]);
@@ -38,14 +35,15 @@ export default function CreateNote() {
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({
                     title: formVals.title,
-                    content: formVals.content,
+                    content: "# Title",
                     folder_id: val,
                 })
             });
+            const data = await response.json();
             if(response.ok){
-                navigate("/", {state: {message: "Create note: success"}});
+                navigate(`/note/${data.id}`);
             }
-            return await response.json();
+            return data;
         }
         catch(error){
             if(error  instanceof Error){
@@ -83,16 +81,6 @@ export default function CreateNote() {
                         required
                     />
                 </div>
-                <div className="space-y-2">
-                    <Label htmlFor="content">Content</Label>
-                    <Textarea
-                        className="w-full h-64"
-                        id="content"
-                        placeholder="Write your note here..."
-                        onChange={(e) => setFormVals(prev => ({...prev, content:e.target.value}))}
-                        value={formVals.content}
-                    />
-                </div>
                 <div>
                     <Select name="method" defaultValue="" value={formVals.folder} onValueChange={(value) => setFormVals(prev => ({ ...prev, folder: value }))}>
                         <SelectTrigger className="w-[120px]" id="method">
@@ -121,12 +109,6 @@ export default function CreateNote() {
                     Create Note
                 </Button>
             </form>
-                        <div className="mt-6 text-left">
-              <h2 className="text-lg font-semibold mb-2">Preview</h2>
-              {formVals && 
-               <ViewMarkdown note={formVals}></ViewMarkdown>
-              }
-            </div>
           </CardContent>
         </Card>
     </div>

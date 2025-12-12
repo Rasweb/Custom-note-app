@@ -68,3 +68,15 @@ export const getNoteById = async (id: number, setNote: Dispatch<SetStateAction<T
     }
 }; 
 
+export const getFolderById = async (id: number, setFolder: Dispatch<SetStateAction<Types.FolderType | undefined>>) => {
+  try {
+    const response = await fetch(`/database/folder/${id}`, {
+      method: "GET",
+      headers: {"Content-Type": "application/json"},
+    });
+    const data = await response.json();
+    setFolder(data[0]);
+  } catch (error) {
+    console.error("Failed to fetch notes: ", error); 
+  }
+}

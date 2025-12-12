@@ -9,16 +9,25 @@ import * as dataHooks from "@/hooks/dataHooks"
 export default function Note() {
     const {id} = useParams<{id: string}>();
     const [note, setNote] = useState<Types.NoteType>();
+    const [folder, setFolder] = useState<Types.FolderType>();
 
     useEffect(() => {
         dataHooks.getNoteById(Number(id), setNote);
     }, []);
 
+    useEffect(() => {
+      if(!note?.folder_id){
+        setFolder(undefined);
+        return;
+      }
+        dataHooks.getFolderById(Number(note?.folder_id), setFolder);
+    }, [note?.folder_id]);
+
   return (
     <div className="container w-full mx-auto p-8 text-center  dark:text-white">
         <Card className="mx-auto ">
           {/* Only render noteheader if note is defined */}
-          {note && <NoteHeader note={note}></NoteHeader>}
+          {note && <NoteHeader note={note} folder={folder}></NoteHeader>}
 
         <CardContent className="whitespace-pre-wrap text-left">
           {note?.content ? (

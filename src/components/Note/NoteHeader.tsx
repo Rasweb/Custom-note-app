@@ -5,13 +5,22 @@ import { useNavigate } from "react-router-dom";
 import * as Types from "@/types/types"
 import * as dataHooks from "@/hooks/dataHooks"
 
-export function NoteHeader({note}: {note: Types.NoteType}) {
+export function NoteHeader({note, folder}: {note: Types.NoteType, folder?: Types.FolderType}) {
     const navigate = useNavigate();
     return(
         <CardHeader className="flex flex-col items-center gap-2">
             <CardTitle>{note?.title}</CardTitle>
             <CardDescription>
-                Created on: {note?.created_at} | Last Modified {note?.updated_at}
+                <p>
+                    Created on: {note?.created_at} | Last Modified {note?.updated_at}
+                </p>
+                <p>
+                   {folder?.name ? (
+                        <span>Folder name: {folder.name} </span>
+                    ): (
+                        <span>No folder</span>
+                    )}
+                </p>
             </CardDescription>
             <CardAction className="self-center">
                 <Button title="/" variant="link" size="default" onClick={() => navigate("/")}>Back to Notes</Button>
