@@ -1,9 +1,9 @@
 import { CardHeader, CardTitle, CardAction, CardDescription } from "../ui/card";
 import {Button } from "../ui/button"
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useNavigate } from "react-router-dom";
 import * as Types from "@/types/types"
 import * as dataHooks from "@/hooks/dataHooks"
+import EditNoteProps from "./EditNoteProps";
 
 export function NoteHeader({note, folder}: {note: Types.NoteType, folder?: Types.FolderType}) {
     const navigate = useNavigate();
@@ -26,16 +26,7 @@ export function NoteHeader({note, folder}: {note: Types.NoteType, folder?: Types
                 <Button title="/" variant="link" size="default" onClick={() => navigate("/")}>Back to Notes</Button>
                 <Button title="/edit/note" variant="link" size="default" onClick={() => navigate(`/edit/note/${note?.id}`)}>Edit note</Button>
                 <Button title="/delete/note" variant="outline" size="default" onClick={() => dataHooks.deleteNoteById(Number(note?.id), navigate)}>Delete note</Button>
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <Button title="" variant="outline" size="default">Change folder</Button>
-                    </PopoverTrigger>
-                    <PopoverContent>
-                        <div>
-                            Popover content
-                        </div>
-                    </PopoverContent>
-                </Popover>
+                <EditNoteProps note={note} folder={folder}/>
             </CardAction>
         </CardHeader>
     )
