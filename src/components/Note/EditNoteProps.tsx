@@ -1,7 +1,9 @@
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -12,6 +14,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import * as Types from "@/types/types"
 import { useEffect, useState } from "react"
 import * as dataHooks from "@/hooks/dataHooks"
+import { Button } from "../ui/button"
 
 export default function EditNoteProps({note, folder}: {note: Types.NoteType, folder?: Types.FolderType}){
     const [formVals, setFormVals] = useState({
@@ -19,56 +22,67 @@ export default function EditNoteProps({note, folder}: {note: Types.NoteType, fol
         folder: ""
     });
     const [folders, setFolders] = useState([]);
-
+    
     useEffect(() => {
         dataHooks.getFolders({setFolders});
-        // setFormVals(note.title, String(folder.id));
-    }, []);
+        setFormVals(prev => ({
+            ...prev,
+            title: note.title,
+            folder: folder ? String(folder.id) : ""
+        }));
+    }, [note, folder]);
 
     return (
         <Dialog>
-            <DialogTrigger>Edit note</DialogTrigger>
+            <DialogTrigger className="px-2 cursor-pointer">Edit note props</DialogTrigger>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Editing note props</DialogTitle>
                     <DialogDescription>
-                        Edit title and folder
+                        Edit title and/or folder
                     </DialogDescription>
-                        <form>
-                            <div>
-                                <Label htmlFor="title">Title</Label>
-                                <Input
-                                    id="titel"
-                                    type="text"
-                                    placeholder="Note title"
-                                    onChange={(e) => setFormVals(prev => ({...prev, title:e.target.value}))}
-                                    value={formVals.title}
-                                ></Input>
-                            </div>
-                            <div>
-                                <Select name="method" defaultValue="" value={formVals.folder} onValueChange={(value) => setFormVals(prev => ({ ...prev, folder: value }))}>
-                                    <SelectTrigger className="w-[120px]" id="method">
-                                        <SelectValue placeholder="Select a folder" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectLabel>Folders</SelectLabel>
-                                            {folders.length ? 
-                                                <>
-                                                    {folders.map((fold: Types.FolderType) => (
-                                                            <SelectItem key={fold.id} value={String(fold.id)}>{fold.name}</SelectItem>
-                                                    ))}
-                                                    <SelectItem value="">No folder</SelectItem>
-                                                </> 
-                                            :
-                                                <div>No folders</div>
-                                            }
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </form>
                 </DialogHeader>
+                <form>
+                    <div>
+                        <Label htmlFor="title">Title</Label>
+                        <Input
+                            id="titel"
+                            type="text"
+                            placeholder="Note title"
+                            onChange={(e) => setFormVals(prev => ({...prev, title:e.target.value}))}
+                            value={formVals.title}
+                        ></Input>
+                    </div>
+                    <div>
+                        <Select name="method" defaultValue="" value={formVals.folder} onValueChange={(value) => setFormVals(prev => ({ ...prev, folder: value }))}>
+                            <SelectTrigger className="w-[120px]" id="method">
+                                <SelectValue placeholder="Select a folder" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Folders</SelectLabel>
+                                    {folders.length ? 
+                                        <>
+                                            {folders.map((fold: Types.FolderType) => (
+                                                    <SelectItem key={fold.id} value={String(fold.id)}>{fold.name}</SelectItem>
+                                            ))}
+                                        </> 
+                                    :
+                                        <div>No folders</div>
+                                    }
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </form>
+                <DialogFooter className="sm:justify-start">
+                    <DialogClose asChild>
+                        <Button type="button" variant="outline" size={"default"}>
+                            Cancel
+                        </Button>
+                    </DialogClose>
+                    <Button title="" variant="outline" size={"default"} onClick={() => dataHooks.updateNoteProps(note, formVals)}>Submit</Button>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
     )

@@ -24,7 +24,6 @@ export function NoteHeader({note, folder}: {note: Types.NoteType, folder?: Types
             </CardDescription>
             <CardAction className="self-center">
                 <Button title="/" variant="link" size="default" onClick={() => navigate("/")}>Back to Notes</Button>
-                <Button title="/edit/note" variant="link" size="default" onClick={() => navigate(`/edit/note/${note?.id}`)}>Edit note</Button>
                 <Button title="/delete/note" variant="outline" size="default" onClick={() => dataHooks.deleteNoteById(Number(note?.id), navigate)}>Delete note</Button>
                 <EditNoteProps note={note} folder={folder}/>
             </CardAction>

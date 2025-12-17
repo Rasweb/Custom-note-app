@@ -42,11 +42,6 @@ export function App() {
               <CreateNote/>
             </Layout>
             } />
-          <Route path="/edit/note/:id" element={
-            <Layout >
-              <EditNote/>
-            </Layout>
-            } />
           <Route path="/create/folder" element={
             <Layout >
               <CreateFolder/>

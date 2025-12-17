@@ -3,7 +3,7 @@ import {Button } from "../components/ui/button"
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import * as dataHooks from "@/hooks/dataHooks"
 import * as Types from "@/types/types"
@@ -16,45 +16,16 @@ export default function CreateNote() {
         folder: ""
     })
     const [folders, setFolders] = useState([]);
-    const [errorHandle, setErrorHandle] = useState({
+    const [errorHandle, setErrorHandle] = useState<Types.errorHandleProps>({
         bool: false,
         msg: ""
     });
 
-    async function createNoteFunc(e: ChangeEvent<HTMLFormElement>){
+    const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
-        let val;
-        try{
-            if(formVals.folder == "none" || formVals.folder == "") {
-                val = null    
-            } else {
-                val = formVals.folder;
-            }
-            const response = await fetch("/database/notes",{
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                    title: formVals.title,
-                    content: "# Title",
-                    folder_id: val,
-                })
-            });
-            const data = await response.json();
-            if(response.ok){
-                navigate(`/note/${data.id}`);
-            }
-            return data;
-        }
-        catch(error){
-            if(error  instanceof Error){
-                console.error("Failed to create note:", error.message);
-                setErrorHandle({bool: true, msg: error.message});
-            } else {
-                console.error("Unknown error:", error);
-                setErrorHandle({bool: true, msg: String(error)});
-            }
-        }
+        await dataHooks.createNoteFunc(formVals, navigate, setErrorHandle)
     };
+
     useEffect(() => {
         dataHooks.getFolders({setFolders});
     }, []);
@@ -69,7 +40,7 @@ export default function CreateNote() {
             </CardAction>
           </CardHeader>
           <CardContent>
-            <form  className="space-y-6" onSubmit={createNoteFunc}>
+            <form  className="space-y-6" onSubmit={handleSubmit}>
                 <div className="space-y-2">
                     <Label htmlFor="title">Title</Label>
                     <Input

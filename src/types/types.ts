@@ -30,3 +30,13 @@ export type FolderProps = {
 export type NoteProps ={
   setNotes: Dispatch<SetStateAction<never[]>>;
 }
+
+export type EditNotePropsType = {
+  title: string,
+  folder: string
+}
+
+export type errorHandleProps = {
+  bool: boolean,
+  msg: string
+}

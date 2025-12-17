@@ -103,6 +103,15 @@ export const databaseRoute = {
       return Response.json("Removed note");
     }
   },
+  "/database/note/props/:id":{
+    async PUT(req: Bun.BunRequest){
+      const editNoteProps = await fileRoutes.editNoteProps(req);
+      return new Response(JSON.stringify(editNoteProps), {
+        status: 200,
+        headers: {"Content-Type": "application/json"},
+      });
+    }
+  },
   // Image upload route
   "/upload/image": {
     async POST(req: Bun.BunRequest) {
