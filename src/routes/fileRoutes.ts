@@ -1,6 +1,12 @@
 import { Database } from "bun:sqlite"
 const db = new Database("mydb.sqlite");
 
+/* Alter table
+db.run(`
+ALTER TABLE table_name ADD COLUMN column_name INTEGER NOT NULL DEFAULT 0;
+`)
+*/
+
 export const createNoteTable = () => {
   db.run(`
     CREATE TABLE IF NOT EXISTS notes (
@@ -10,6 +16,7 @@ export const createNoteTable = () => {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       folder_id INTEGER,
+      pin INTEGER NOT NULL DEFAULT 0,
       FOREIGN KEY (folder_id) REFERENCES folders(id)
       )`
     );
@@ -84,8 +91,7 @@ export const editNoteProps = async (req:Bun.BunRequest) => {
 }
 
 export const deleteNote = (currId: number) => {
-  const noteId = currId;
   const sql = `DELETE FROM notes WHERE id = :id;`
   const stmt = db.prepare(sql);
-  stmt.run(noteId);
+  stmt.run(currId);
 }

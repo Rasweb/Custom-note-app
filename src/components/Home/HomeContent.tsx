@@ -1,6 +1,12 @@
 import * as Types from "@/types/types"
 import { Card, CardHeader, CardTitle } from "../ui/card";
 import { useNavigate } from "react-router-dom";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu"
 
 export function HomeContent({noteCount, notes}: {noteCount: number, notes: Types.NoteType[]}){
     const navigate = useNavigate();
@@ -9,17 +15,33 @@ export function HomeContent({noteCount, notes}: {noteCount: number, notes: Types
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 sm:grid-cols-1 pt-4">
             {noteCount ? 
                 <>
-                    {notes.map((note: Types.NoteType) => (
-                        <Card key={note.id} className="w-full cursor-pointer hover:shadow-md transition"
-                            onClick={() => navigate(`/note/${note.id}`)}>
-                            <CardHeader>
-                                <CardTitle>
-                                    <div>{note.title}</div>
-                                    <div>{note.created_at}</div>
-                                </CardTitle>
-                            </CardHeader>
-                        </Card>
-                    ))}
+                    {notes.map((note: Types.NoteType) => {
+                        const path = `/note/${note.id}`;
+                        const fullPath = `${window.location.origin}${path}`;
+                        return (
+                        <ContextMenu key={note.id}>
+                            <ContextMenuTrigger>
+                                <Card className="w-full cursor-pointer hover:shadow-md transition"
+                                onClick={() => navigate(`/note/${note.id}`)}>
+                                    <CardHeader>
+                                       <CardTitle>
+                                            <div>{note.title}</div>
+                                            <div>{note.created_at}</div>
+                                        </CardTitle>
+                                    </CardHeader>
+                                </Card>
+                            </ContextMenuTrigger>
+                            <ContextMenuContent>
+                                <ContextMenuItem onClick={() => navigate(`${path}`)}>Open</ContextMenuItem>
+                                <ContextMenuItem>Edit note props</ContextMenuItem>
+                                <ContextMenuItem onClick={() => navigator.clipboard.writeText(fullPath)}>Copy path</ContextMenuItem>
+                                <ContextMenuItem onClick={() => navigator.clipboard.writeText(path)}>Copy relative path</ContextMenuItem>
+                                <ContextMenuItem>Pin</ContextMenuItem>
+                                <ContextMenuItem>Delete</ContextMenuItem>
+                            </ContextMenuContent>
+                        </ContextMenu>
+                        )
+                    })}
                 </>
             : 
                 <Card>
