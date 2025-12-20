@@ -91,11 +91,8 @@ export const databaseRoute = {
     return Response.json(note);
     },
     async PUT(req: Bun.BunRequest){
-      const editNote = await fileRoutes.editNote(req);
-      return new Response(JSON.stringify(editNote), {
-        status: 200,
-        headers: {"Content-Type": "application/json"},
-      });
+      const result = await fileRoutes.editNote(req);
+      return Response.json(result);
     },
     async DELETE(req: Bun.BunRequest){
       const id = idFix(req);
@@ -103,16 +100,6 @@ export const databaseRoute = {
       return Response.json("Removed note");
     }
   },
-    "/database/note/props/:id":{
-      async PUT(req: Bun.BunRequest){
-        const result = await fileRoutes.editNoteProps(req);
-        return Response.json(result);
-        // return new Response(JSON.stringify(editNoteProps), {
-        //   status: 200,
-        //   headers: {"Content-Type": "application/json"},
-        // });
-      }
-    },
   "/database/note/pin/:id":{
     async PUT(req: Bun.BunRequest){
       const changePinmode = await fileRoutes.pinNote(req);

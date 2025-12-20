@@ -22,6 +22,28 @@ export default function EditNoteProps({note, folder, onNoteUpdated}: {note: Type
         folder: ""
     });
     const [folders, setFolders] = useState([]);
+
+    const onSubmit = async (formVals: Types.EditNotePropsType) => {
+        const updatedNote = {
+            ...note,
+            title: formVals.title,
+            folder_id: formVals.folder ? parseInt(formVals.folder) : null
+        };
+
+        try {
+            const response = await fetch(`/database/note/${note.id}`, {
+                method: "PUT",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(updatedNote),
+            });
+            if(response.ok){
+                const savedNote = await response.json();
+                onNoteUpdated(savedNote);
+            }
+        } catch (error) {
+            console.error("Failed to update note: ", error);            
+        }
+    }
     
     useEffect(() => {
         dataHooks.getFolders({setFolders});
@@ -82,8 +104,7 @@ export default function EditNoteProps({note, folder, onNoteUpdated}: {note: Type
                         </Button>
                     </DialogClose>
                     <Button title="" variant="outline" size={"default"} onClick={async() => {
-                        const updated = await dataHooks.updateNoteProps(note, formVals);
-                        onNoteUpdated(updated)}}
+                        await onSubmit(formVals)}}
                     >Submit</Button>
                 </DialogFooter>
             </DialogContent>

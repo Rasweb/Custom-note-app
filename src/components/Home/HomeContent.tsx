@@ -11,7 +11,8 @@ import * as dataHooks from "@/hooks/dataHooks"
 
 // Using callback
 export function HomeContent({noteCount, notes, onPinChange, onNoteRemoved}: {noteCount: number, notes: Types.NoteType[], onPinChange: (id: number, newPin: number) => void, onNoteRemoved: (noteId: number) => void}){
-    const navigate = useNavigate();   
+    const navigate = useNavigate();  
+     
     return (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 sm:grid-cols-1 pt-4">
             {noteCount ? 

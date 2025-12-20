@@ -2,6 +2,7 @@ import * as Types from "@/types/types"
 import type { Dispatch, SetStateAction } from "react";
 import type { NavigateFunction } from "react-router-dom";
 
+// TODO - return response.json() instead of pasing state and changing it here, see editprops component for info
 export const getFolders = async ({setFolders}: Types.FolderProps) => {
     const foldersURL = "/database/folders";
     try {
@@ -81,28 +82,6 @@ export const getFolderById = async (id: number, setFolder: Dispatch<SetStateActi
   }
 }
 
-export const updateNoteProps = async (note: Types.NoteType, formVals: Types.EditNotePropsType ) => {
-  try {
-    const response = await fetch(`/database/note/props/${note.id}`, {
-      method: "PUT",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        id: note.id,
-        title: formVals.title,
-        folder_id: formVals.folder ? parseInt(formVals.folder) : null
-      }),
-    });
-      if(response.ok){
-        console.log("Note props update success");
-        // TODO - fix in future, update data state instead
-        //  window.location.reload(); 
-        return response.json();
-      }
-  } catch (error) {
-    console.error("Failed to update note props: ", error);
-  }
-}
-
 export const createFolderFunc = async (name: string,  navigate: NavigateFunction) => {
   console.log("Create folder func pressed");
   try {
@@ -163,7 +142,7 @@ export const createNoteFunc = async (formVals: Types.EditNotePropsType, navigate
   }
 };
 
-
+// TODO - Merge with edit note: /database/note/:id
 export const changePinMode = async (note_id: number, pin: number, onPinChange: (id: number, newPin: number) => void) => {
   let newPin;
   // Changes the newPin value

@@ -35,7 +35,7 @@ export default function Note() {
 
         <CardContent className="whitespace-pre-wrap text-left">
           {note?.content ? (
-            <NoteContent note={note}></NoteContent>
+            <NoteContent note={note} onNoteUpdate={handleNoteUpdate}></NoteContent>
           ): (
             <p>No content available.</p>
           )}
