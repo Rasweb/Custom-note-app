@@ -24,6 +24,10 @@ export default function Home(){
       );
     };
 
+    const removeNote = (noteId: number) => {
+      setNotes(prev => prev.filter(note => note.id !== noteId));
+    };
+
     useEffect(() => {
         dataHooks.getNotes({setNotes});
         dataHooks.getFolders({setFolders});
@@ -40,7 +44,7 @@ export default function Home(){
           </CardContent>
         </Card>
         {/* Using a callback */}
-        <HomeContent noteCount={notes.length} notes={notes} onPinChange={updatePin}></HomeContent>
+        <HomeContent noteCount={notes.length} notes={notes} onPinChange={updatePin} onNoteRemoved={removeNote}></HomeContent>
       </div>
     )
 }

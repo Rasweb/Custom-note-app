@@ -105,11 +105,12 @@ export const databaseRoute = {
   },
     "/database/note/props/:id":{
       async PUT(req: Bun.BunRequest){
-        const editNoteProps = await fileRoutes.editNoteProps(req);
-        return new Response(JSON.stringify(editNoteProps), {
-          status: 200,
-          headers: {"Content-Type": "application/json"},
-        });
+        const result = await fileRoutes.editNoteProps(req);
+        return Response.json(result);
+        // return new Response(JSON.stringify(editNoteProps), {
+        //   status: 200,
+        //   headers: {"Content-Type": "application/json"},
+        // });
       }
     },
   "/database/note/pin/:id":{

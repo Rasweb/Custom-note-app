@@ -5,7 +5,7 @@ import * as Types from "@/types/types"
 import * as dataHooks from "@/hooks/dataHooks"
 import EditNoteProps from "./EditNoteProps";
 
-export function NoteHeader({note, folder}: {note: Types.NoteType, folder?: Types.FolderType}) {
+export function NoteHeader({note, folder, onNoteUpdated}: {note: Types.NoteType, folder?: Types.FolderType, onNoteUpdated: (note: Types.NoteType) => void}) {
     const navigate = useNavigate();
     return(
         <CardHeader className="flex flex-col items-center gap-2">
@@ -25,7 +25,7 @@ export function NoteHeader({note, folder}: {note: Types.NoteType, folder?: Types
             <CardAction className="self-center">
                 <Button title="/" variant="link" size="default" onClick={() => navigate("/")}>Back to Notes</Button>
                 <Button title="/delete/note" variant="outline" size="default" onClick={() => dataHooks.deleteNoteById(Number(note?.id), navigate)}>Delete note</Button>
-                <EditNoteProps note={note} folder={folder}/>
+                <EditNoteProps note={note} folder={folder} onNoteUpdated={onNoteUpdated}/>
             </CardAction>
         </CardHeader>
     )

@@ -95,7 +95,8 @@ export const updateNoteProps = async (note: Types.NoteType, formVals: Types.Edit
       if(response.ok){
         console.log("Note props update success");
         // TODO - fix in future, update data state instead
-         window.location.reload(); 
+        //  window.location.reload(); 
+        return response.json();
       }
   } catch (error) {
     console.error("Failed to update note props: ", error);

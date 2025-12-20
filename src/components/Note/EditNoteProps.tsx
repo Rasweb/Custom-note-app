@@ -16,7 +16,7 @@ import { useEffect, useState } from "react"
 import * as dataHooks from "@/hooks/dataHooks"
 import { Button } from "../ui/button"
 
-export default function EditNoteProps({note, folder}: {note: Types.NoteType, folder?: Types.FolderType}){
+export default function EditNoteProps({note, folder, onNoteUpdated}: {note: Types.NoteType, folder?: Types.FolderType, onNoteUpdated: (note: Types.NoteType) => void}){
     const [formVals, setFormVals] = useState({
         title: "",
         folder: ""
@@ -81,7 +81,10 @@ export default function EditNoteProps({note, folder}: {note: Types.NoteType, fol
                             Cancel
                         </Button>
                     </DialogClose>
-                    <Button title="" variant="outline" size={"default"} onClick={() => dataHooks.updateNoteProps(note, formVals)}>Submit</Button>
+                    <Button title="" variant="outline" size={"default"} onClick={async() => {
+                        const updated = await dataHooks.updateNoteProps(note, formVals);
+                        onNoteUpdated(updated)}}
+                    >Submit</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
