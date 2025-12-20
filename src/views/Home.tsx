@@ -5,13 +5,24 @@ import { useEffect, useState } from "react";
 import { HomeHeader } from "@/components/Home/HomeHeader";
 import { HomeContent } from "@/components/Home/HomeContent";
 import * as dataHooks from "@/hooks/dataHooks"
+import * as Types from "@/types/types"
 
 export default function Home(){
     const navigate = useNavigate();
-    const [notes, setNotes] = useState([]);
+    const [notes, setNotes] = useState<Types.NoteType[]>([]);
     const location = useLocation();
     const [folders, setFolders] = useState([]);
     const message = location.state?.message;
+
+    const updatePin = (noteId: number, newPin: number) => {
+      setNotes(prev => 
+          prev.map(note => 
+            note.id == noteId
+              ? {...note, pin:newPin}
+              :note
+          )
+      );
+    };
 
     useEffect(() => {
         dataHooks.getNotes({setNotes});
@@ -28,7 +39,8 @@ export default function Home(){
             <Button title="/about" variant="link" size="default" onClick={() => navigate("/about")}>About page</Button>
           </CardContent>
         </Card>
-        <HomeContent noteCount={notes.length} notes={notes}></HomeContent>
+        {/* Using a callback */}
+        <HomeContent noteCount={notes.length} notes={notes} onPinChange={updatePin}></HomeContent>
       </div>
     )
 }

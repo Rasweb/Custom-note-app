@@ -91,7 +91,20 @@ export const editNoteProps = async (req:Bun.BunRequest) => {
 }
 
 export const deleteNote = (currId: number) => {
-  const sql = `DELETE FROM notes WHERE id = :id;`
+  const sql = `DELETE FROM notes WHERE id = :id`
   const stmt = db.prepare(sql);
   stmt.run(currId);
+}
+
+export const pinNote = async (req:Bun.BunRequest) => {
+  const body = await req.json();
+  const {id, pin} = body;
+  const query = db.query (`
+    UPDATE notes SET
+      pin = ?,
+      updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?  
+  `);
+  const changePinmode = query.get(pin, id);
+  return changePinmode;
 }

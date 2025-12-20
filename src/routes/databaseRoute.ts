@@ -103,10 +103,19 @@ export const databaseRoute = {
       return Response.json("Removed note");
     }
   },
-  "/database/note/props/:id":{
+    "/database/note/props/:id":{
+      async PUT(req: Bun.BunRequest){
+        const editNoteProps = await fileRoutes.editNoteProps(req);
+        return new Response(JSON.stringify(editNoteProps), {
+          status: 200,
+          headers: {"Content-Type": "application/json"},
+        });
+      }
+    },
+  "/database/note/pin/:id":{
     async PUT(req: Bun.BunRequest){
-      const editNoteProps = await fileRoutes.editNoteProps(req);
-      return new Response(JSON.stringify(editNoteProps), {
+      const changePinmode = await fileRoutes.pinNote(req);
+      return new Response(JSON.stringify(changePinmode), {
         status: 200,
         headers: {"Content-Type": "application/json"},
       });

@@ -6,7 +6,6 @@ import { useRef } from "react";
 // TODO - modify the someSTyle class for ligth mode and more
 // TODO - Check here for more toolbar stuff: https://mdxeditor.dev/editor/docs/customizing-toolbar
 // TODO - Handle responsiveness
-// TODO - Save to the sqlite database
 export function ViewMarkdown({note}:{note: Types.NoteType}){
     /* useRef
         - Persists for the full lifetime of the component

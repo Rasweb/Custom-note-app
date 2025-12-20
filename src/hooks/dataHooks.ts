@@ -1,5 +1,5 @@
 import * as Types from "@/types/types"
-import type { ChangeEvent, Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import type { NavigateFunction } from "react-router-dom";
 
 export const getFolders = async ({setFolders}: Types.FolderProps) => {
@@ -161,3 +161,27 @@ export const createNoteFunc = async (formVals: Types.EditNotePropsType, navigate
       }
   }
 };
+
+
+export const changePinMode = async (note_id: number, pin: number, onPinChange: (id: number, newPin: number) => void) => {
+  let newPin;
+  // Changes the newPin value
+  newPin = pin === 1 ? 0 : 1;
+
+  try {
+    const response = await fetch(`/database/note/pin/${note_id}`, {
+      method: "PUT",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+          pin: newPin,
+          id: note_id,
+      }),
+    });
+    if(response.ok){
+      console.log("Pin changed successfully");
+      onPinChange(note_id, newPin);
+    }
+  } catch (error) {
+      console.error("Failed to change pin mode: ", error);
+  }
+}

@@ -7,10 +7,11 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
+import * as dataHooks from "@/hooks/dataHooks"
 
-export function HomeContent({noteCount, notes}: {noteCount: number, notes: Types.NoteType[]}){
-    const navigate = useNavigate();
-
+// Using callback
+export function HomeContent({noteCount, notes, onPinChange}: {noteCount: number, notes: Types.NoteType[], onPinChange: (id: number, newPin: number) => void}){
+    const navigate = useNavigate();   
     return (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 sm:grid-cols-1 pt-4">
             {noteCount ? 
@@ -36,7 +37,7 @@ export function HomeContent({noteCount, notes}: {noteCount: number, notes: Types
                                 <ContextMenuItem>Edit note props</ContextMenuItem>
                                 <ContextMenuItem onClick={() => navigator.clipboard.writeText(fullPath)}>Copy path</ContextMenuItem>
                                 <ContextMenuItem onClick={() => navigator.clipboard.writeText(path)}>Copy relative path</ContextMenuItem>
-                                <ContextMenuItem>Pin</ContextMenuItem>
+                                <ContextMenuItem onClick={() => dataHooks.changePinMode(note.id, note.pin, onPinChange)}>{note.pin == 1 ? "UnPin" : "Pin"}</ContextMenuItem>
                                 <ContextMenuItem>Delete</ContextMenuItem>
                             </ContextMenuContent>
                         </ContextMenu>

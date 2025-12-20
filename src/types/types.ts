@@ -21,14 +21,16 @@ export type NoteType = {
   updated_at: string;
   content:string;
   folder_id: number;
+  pin: number
 };
+
 
 export type FolderProps = {
   setFolders: Dispatch<SetStateAction<never[]>>;
 }
 
 export type NoteProps ={
-  setNotes: Dispatch<SetStateAction<never[]>>;
+  setNotes: Dispatch<SetStateAction<NoteType[]>>;
 }
 
 export type EditNotePropsType = {
