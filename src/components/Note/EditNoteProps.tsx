@@ -27,22 +27,12 @@ export default function EditNoteProps({note, folder, onNoteUpdated}: {note: Type
         const updatedNote = {
             ...note,
             title: formVals.title,
-            folder_id: formVals.folder ? parseInt(formVals.folder) : null
+            folder_id: formVals.folder ? parseInt(formVals.folder) : 0
         };
 
-        try {
-            const response = await fetch(`/database/note/${note.id}`, {
-                method: "PUT",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(updatedNote),
-            });
-            if(response.ok){
-                const savedNote = await response.json();
-                onNoteUpdated(savedNote);
-            }
-        } catch (error) {
-            console.error("Failed to update note: ", error);            
-        }
+        await dataHooks.editNote(updatedNote, note.id, (savedNote) => {
+            onNoteUpdated(savedNote);  // Handle different custom update action
+        });
     }
     
     useEffect(() => {

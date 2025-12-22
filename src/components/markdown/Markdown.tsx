@@ -2,6 +2,8 @@ import * as Types from "@/types/types"
 import {BlockTypeSelect, BoldItalicUnderlineToggles, CodeToggle, CreateLink, InsertImage, InsertTable, InsertThematicBreak, ListsToggle, MDXEditor, UndoRedo, codeBlockPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, toolbarPlugin } from '@mdxeditor/editor'
 import '@mdxeditor/editor/style.css'
 import { useEffect, useRef } from "react";
+import * as dataHooks from "@/hooks/dataHooks"
+
 
 // TODO - modify the someSTyle class for ligth mode and more
 // TODO - Check here for more toolbar stuff: https://mdxeditor.dev/editor/docs/customizing-toolbar
@@ -44,20 +46,10 @@ export function ViewMarkdown({note, onNoteUpdate}:{note: Types.NoteType, onNoteU
             return
         }
 
-        try{
-            const response = await fetch(`/database/note/${note.id}`, {
-                method: "PUT",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(updatedNote),
-            });
-            if(response.ok){
-                const savedNote = await response.json();
-                lastSavedRef.current = savedNote.content;
-                onNoteUpdate(savedNote);
-            }
-        } catch(error) {
-            console.error("Failted to autosave note: ", error);
-        }
+        await dataHooks.editNote(updatedNote,note.id, (savedNote) => {
+            lastSavedRef.current = savedNote.content;
+            onNoteUpdate(savedNote)
+        });
     };
 
     async function imageUploadHandler(image: File){

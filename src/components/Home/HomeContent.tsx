@@ -12,7 +12,19 @@ import * as dataHooks from "@/hooks/dataHooks"
 // Using callback
 export function HomeContent({noteCount, notes, onPinChange, onNoteRemoved}: {noteCount: number, notes: Types.NoteType[], onPinChange: (id: number, newPin: number) => void, onNoteRemoved: (noteId: number) => void}){
     const navigate = useNavigate();  
-     
+    
+    const changePin = async (pin: number, note: Types.NoteType, note_id: number) => {
+        let newPin;
+        newPin = pin === 1 ? 0 : 1;
+        const updatedNote = {
+            ...note,
+            pin: newPin,
+            id: note_id
+        }
+        onPinChange(note_id, newPin);
+
+        await dataHooks.editNote(updatedNote, note_id, (savedNote) => { });
+    }
     return (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 sm:grid-cols-1 pt-4">
             {noteCount ? 
@@ -38,7 +50,7 @@ export function HomeContent({noteCount, notes, onPinChange, onNoteRemoved}: {not
                                 <ContextMenuItem>Edit note props</ContextMenuItem>
                                 <ContextMenuItem onClick={() => navigator.clipboard.writeText(fullPath)}>Copy path</ContextMenuItem>
                                 <ContextMenuItem onClick={() => navigator.clipboard.writeText(path)}>Copy relative path</ContextMenuItem>
-                                <ContextMenuItem onClick={() => dataHooks.changePinMode(note.id, note.pin, onPinChange)}>{note.pin == 1 ? "UnPin" : "Pin"}</ContextMenuItem>
+                                <ContextMenuItem onClick={() => changePin(note.pin, note, note.id)}>{note.pin == 1 ? "UnPin" : "Pin"}</ContextMenuItem>
                                 <ContextMenuItem onClick={() => {dataHooks.deleteNoteById(Number(note.id), navigate); onNoteRemoved(note.id)}}>Delete</ContextMenuItem>
                             </ContextMenuContent>
                         </ContextMenu>

@@ -100,15 +100,6 @@ export const databaseRoute = {
       return Response.json("Removed note");
     }
   },
-  "/database/note/pin/:id":{
-    async PUT(req: Bun.BunRequest){
-      const changePinmode = await fileRoutes.pinNote(req);
-      return new Response(JSON.stringify(changePinmode), {
-        status: 200,
-        headers: {"Content-Type": "application/json"},
-      });
-    }
-  },
   // Image upload route
   "/upload/image": {
     async POST(req: Bun.BunRequest) {

@@ -142,26 +142,18 @@ export const createNoteFunc = async (formVals: Types.EditNotePropsType, navigate
   }
 };
 
-// TODO - Merge with edit note: /database/note/:id
-export const changePinMode = async (note_id: number, pin: number, onPinChange: (id: number, newPin: number) => void) => {
-  let newPin;
-  // Changes the newPin value
-  newPin = pin === 1 ? 0 : 1;
-
+export const editNote = async(updatedNote: Types.NoteType, note_id: number, onNoteUpdated:(note:Types.NoteType) => void) => {
   try {
-    const response = await fetch(`/database/note/pin/${note_id}`, {
-      method: "PUT",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-          pin: newPin,
-          id: note_id,
-      }),
+    const response = await fetch(`/database/note/${note_id}`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(updatedNote),
     });
     if(response.ok){
-      console.log("Pin changed successfully");
-      onPinChange(note_id, newPin);
+        const savedNote = await response.json();
+        onNoteUpdated(savedNote);
     }
   } catch (error) {
-      console.error("Failed to change pin mode: ", error);
+      console.error("Failed to update note: ", error);            
   }
 }
