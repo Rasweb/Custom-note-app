@@ -15,8 +15,26 @@ export default function Note() {
       setNote(updateNote);
     }
 
+    const fetchNote = async () => {
+      try {
+        const response = await dataHooks.getNoteById(Number(id));
+        setNote(response);
+      } catch (error) {
+        console.error("Failed to fetch note: ", error);
+      }
+    }
+
+    const fetchFolder = async () => {
+      try {
+        const response = await dataHooks.getFolderById(Number(note?.folder_id));
+        setNote(response);
+      } catch (error) {
+        console.error("Failed to fetch folder: ", error);
+      }
+    }
+    
     useEffect(() => {
-        dataHooks.getNoteById(Number(id), setNote);
+      fetchNote();
     }, []);
 
     useEffect(() => {
@@ -24,7 +42,7 @@ export default function Note() {
         setFolder(undefined);
         return;
       }
-        dataHooks.getFolderById(Number(note?.folder_id), setFolder);
+      fetchFolder();
     }, [note?.folder_id]);
 
   return (

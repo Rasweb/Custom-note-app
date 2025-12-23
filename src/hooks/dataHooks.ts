@@ -1,9 +1,7 @@
 import * as Types from "@/types/types"
-import type { Dispatch, SetStateAction } from "react";
 import type { NavigateFunction } from "react-router-dom";
 
-// TODO - return response.json() instead of pasing state and changing it here, see editprops component for info
-export const getFolders = async ({setFolders}: Types.FolderProps) => {
+export const getFolders = async () => {
     const foldersURL = "/database/folders";
     try {
       const response = await fetch(foldersURL, {
@@ -11,14 +9,13 @@ export const getFolders = async ({setFolders}: Types.FolderProps) => {
         headers: {"Content-Type": "application/json"},
       });
       const data = await response.json();
-      setFolders(data);
       return data;
     } catch (error) {
       console.error("Failed to fetch folders", error);
     }
 };
 
-export const getNotes = async ({setNotes}:Types.NoteProps) => {
+export const getNotes = async () => {
     const notesURL = "/database/notes";
     try{
       const response = await fetch(notesURL, {
@@ -26,7 +23,6 @@ export const getNotes = async ({setNotes}:Types.NoteProps) => {
         headers: {"Content-Type": "application/json"},
       });
       const data = await response.json();
-      setNotes(data);
       return data;
     } catch(error){
       console.error("Failed to fetch notes:", error);
@@ -55,28 +51,28 @@ export const deleteNoteById = async (id: number, navigate: NavigateFunction) => 
     }
   };
 
-export const getNoteById = async (id: number, setNote: Dispatch<SetStateAction<Types.NoteType | undefined>>) => {
+export const getNoteById = async (id: number) => {
   try{
     const response = await fetch(`/database/note/${id}`, {
       method: "GET",
       headers: {"Content-Type": "application/json"},
     });
     const data = await response.json();
-    setNote(data[0]);
+    return data[0];
     }
     catch(error){
       console.error("Failed to fetch notes:", error);
     }
 }; 
 
-export const getFolderById = async (id: number, setFolder: Dispatch<SetStateAction<Types.FolderType | undefined>>) => {
+export const getFolderById = async (id: number) => {
   try {
     const response = await fetch(`/database/folder/${id}`, {
       method: "GET",
       headers: {"Content-Type": "application/json"},
     });
     const data = await response.json();
-    setFolder(data[0]);
+    return data[0];
   } catch (error) {
     console.error("Failed to fetch notes: ", error); 
   }
@@ -108,7 +104,7 @@ export const createFolderFunc = async (name: string,  navigate: NavigateFunction
 };
 
 
-export const createNoteFunc = async (formVals: Types.EditNotePropsType, navigate: NavigateFunction, setErrorHandle: Dispatch<SetStateAction<Types.errorHandleProps>>) => {
+export const createNoteFunc = async (formVals: Types.EditNotePropsType, navigate: NavigateFunction) => {
   let val;
   try{
       if(formVals.folder == "none" || formVals.folder == "") {
@@ -134,10 +130,16 @@ export const createNoteFunc = async (formVals: Types.EditNotePropsType, navigate
   catch(error){
       if(error  instanceof Error){
           console.error("Failed to create note:", error.message);
-          setErrorHandle({bool: true, msg: error.message});
+          return {
+            bool: true,
+            msg:error.message
+          }
       } else {
           console.error("Unknown error:", error);
-          setErrorHandle({bool: true, msg: String(error)});
+          return {
+            bool: true,
+            msg:String(error)
+          }
       }
   }
 };

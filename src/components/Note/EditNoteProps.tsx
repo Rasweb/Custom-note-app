@@ -35,13 +35,22 @@ export default function EditNoteProps({note, folder, onNoteUpdated}: {note: Type
         });
     }
     
+    const fetchFolders = async() => {
+        try {
+            const response = await dataHooks.getFolders();
+            setFolders(response);
+            setFormVals(prev => ({
+                ...prev,
+                title: note.title,
+                folder: folder ? String(folder.id) : ""
+            }));
+        } catch (error) {
+            console.error("Failed to fetch folders: ", error);           
+        }
+    }; 
+    
     useEffect(() => {
-        dataHooks.getFolders({setFolders});
-        setFormVals(prev => ({
-            ...prev,
-            title: note.title,
-            folder: folder ? String(folder.id) : ""
-        }));
+        fetchFolders();
     }, [note, folder]);
 
     return (

@@ -10,15 +10,33 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const { isMobile } = useSidebar()
     
     function handleClick(){
-      dataHooks.getFolders({setFolders});
-      dataHooks.getNotes({setNotes});
+      fetchFolders();
+      fetchNotes();
     }
      return isMobile ? <SidebarTrigger onClick={handleClick} /> : null
   }
 
+  const fetchFolders = async() => {
+    try {
+      const response = await dataHooks.getFolders();
+      setFolders(response);
+    } catch (error) {
+      console.error("Failed to fetch folders: ", error);
+    }
+  }
+
+  const fetchNotes = async () => {
+    try {
+      const response = await dataHooks.getNotes();
+      setNotes(response);
+    } catch (error) {
+      console.error("Failed to fetch notes: ", error);
+    }
+  }
+
   useEffect(() => {
-    dataHooks.getNotes({setNotes});
-    dataHooks.getFolders({setFolders});
+    fetchNotes();
+    fetchFolders();
   }, []); // [] ensures it only runs once on mount.
 
   return (

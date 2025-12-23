@@ -23,11 +23,25 @@ export default function CreateNote() {
 
     const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
-        await dataHooks.createNoteFunc(formVals, navigate, setErrorHandle)
+      
+        try {
+            const response = await dataHooks.createNoteFunc(formVals, navigate)            
+        } catch (error) {
+            console.error("Failed to create note: ", error);
+        }
     };
 
+    const fetchFolders = async () => {
+        try {
+            const response = await dataHooks.getFolders();
+            setFolders(response);
+        } catch (error) {
+            console.error("Failed to fetch folders: ", error);
+        }
+    }
+
     useEffect(() => {
-        dataHooks.getFolders({setFolders});
+        fetchFolders();
     }, []);
   return (
     <div className="container mx-auto p-8 text-center relative z-10">

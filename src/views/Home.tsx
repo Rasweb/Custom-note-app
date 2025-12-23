@@ -28,14 +28,32 @@ export default function Home(){
       setNotes(prev => prev.filter(note => note.id !== noteId));
     };
 
+    const fetchFolders = async () => {
+      try {
+        const response = await dataHooks.getFolders();
+        setFolders(response);
+      } catch (error) {
+        console.error("Failed to fetch folders: ", error);
+      }
+    }
+
+    const fetchNotes = async () => {
+      try {
+        const response = await dataHooks.getNotes();
+        setNotes(response);
+      } catch (error) {
+        console.error("Failed to fetch notes: ", error);
+      }
+    }
+
     useEffect(() => {
-        dataHooks.getNotes({setNotes});
-        dataHooks.getFolders({setFolders});
+        fetchNotes();
+        fetchFolders();
     }, []); // [] ensures it only runs once on mount.
 
     return(
       <div className="container w-full mx-auto p-8 text-center  dark:text-white">
-        {/* TODO - Temp status msg */}
+        {/* TODO - Temp status msg - handle later for all functions */}
         {message && <div className="text-green-500">{message}</div>}
         <Card className="mx-auto ">
           <HomeHeader noteCount={notes.length}></HomeHeader>
