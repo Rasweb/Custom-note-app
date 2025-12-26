@@ -27,7 +27,7 @@ export default function Note() {
     const fetchFolder = async () => {
       try {
         const response = await dataHooks.getFolderById(Number(note?.folder_id));
-        setNote(response);
+        setFolder(response);
       } catch (error) {
         console.error("Failed to fetch folder: ", error);
       }

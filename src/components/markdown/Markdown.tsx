@@ -1,23 +1,32 @@
 import * as Types from "@/types/types"
-import {BlockTypeSelect, BoldItalicUnderlineToggles, CodeToggle, CreateLink, InsertImage, InsertTable, InsertThematicBreak, ListsToggle, MDXEditor, UndoRedo, codeBlockPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, toolbarPlugin } from '@mdxeditor/editor'
+import {BlockTypeSelect, BoldItalicUnderlineToggles, CodeToggle, CreateLink, DialogButton, InsertImage, InsertTable, InsertThematicBreak, ListsToggle, MDXEditor, UndoRedo, codeBlockPlugin, headingsPlugin, imagePlugin, linkDialogPlugin, linkPlugin, listsPlugin, markdownShortcutPlugin, quotePlugin, tablePlugin, thematicBreakPlugin, toolbarPlugin} from '@mdxeditor/editor'
 import '@mdxeditor/editor/style.css'
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as dataHooks from "@/hooks/dataHooks"
+import { useNavigate } from "react-router-dom";
 
-
-// TODO - modify the someSTyle class for ligth mode and more
-// TODO - Check here for more toolbar stuff: https://mdxeditor.dev/editor/docs/customizing-toolbar
-// TODO - Handle responsiveness
+// TODO - Handle responsiveness and ligth/dakr mode
+// TODO - navigate not working, handle later - at the moment full reaload is used
 export function ViewMarkdown({note, onNoteUpdate}:{note: Types.NoteType, onNoteUpdate:(updateNote: Types.NoteType) => void}){
     /* useRef
         - Persists for the full lifetime of the component
         - Changing a property does not trigger a re-render
         - ref.current to access or modify the stored variable
     */
+   const navigate = useNavigate();
+
+    type nType = {
+        id: number,
+        title: string
+    };
+
+    const [notesList, setNotesList] = useState<nType[]>([]); // full notes
+    const [noteSuggestions, setNoteSuggestions] = useState<string[]>([]); // only titles for autocomplete
 
     const contentRef = useRef(note?.content ?? "# empty");
     const lastSavedRef = useRef("");
     const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const noteLinkMapRef = useRef<Map<string, number>>(new Map());
 
     const handleChange = (newContent: string) => {
         contentRef.current = newContent;
@@ -81,6 +90,30 @@ export function ViewMarkdown({note, onNoteUpdate}:{note: Types.NoteType, onNoteU
         };
     }, []);
 
+
+    useEffect(() => {
+        const fetchNoteSuggestions = async () => {
+            try {
+                const notes = await dataHooks.getNotes();
+                setNotesList(notes.map((n: nType) => ({ id: n.id, title: n.title })));
+                setNoteSuggestions(notes.map((n: nType) => n.title)); // only titles
+
+                // Create a map for quick lookup
+                const map = new Map();
+                notes.forEach((n: nType) => {
+                    map.set(n.title, n.id);
+                });
+
+                noteLinkMapRef.current = map;
+    
+            } catch (error) {
+                console.error("Failted to fetch notes: ", error);
+            }
+        };
+        fetchNoteSuggestions();
+    }, []);
+    
+
     return (
         <div >
             <MDXEditor 
@@ -93,7 +126,16 @@ export function ViewMarkdown({note, onNoteUpdate}:{note: Types.NoteType, onNoteU
                     quotePlugin(),
                     thematicBreakPlugin(),
                     linkPlugin(),
-                    linkDialogPlugin(),
+                    linkDialogPlugin({
+                        linkAutocompleteSuggestions: noteSuggestions,
+                        onClickLinkCallback: (url) => {
+                            const noteId = noteLinkMapRef.current.get(url);
+                            console.log("Id: ", noteId)
+
+                            // navigate(`/note/${noteId}`);
+                            window.location.href = `/note/${noteId}`; // Forces a full-page reload
+                        }
+                    }),
                     codeBlockPlugin(),
                     imagePlugin({imageUploadHandler}),
                     tablePlugin(),
